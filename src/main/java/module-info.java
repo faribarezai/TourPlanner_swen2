@@ -9,6 +9,7 @@ module com.example.TourPlanner {
     requires jakarta.persistence;
     requires spring.boot.autoconfigure;
     requires spring.boot;
+    requires org.apache.logging.log4j;
 
     opens com.example.TourPlanner to javafx.fxml;
     exports com.example.TourPlanner;

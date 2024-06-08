@@ -3,11 +3,15 @@ package com.example.TourPlanner;
 import com.example.TourPlanner.model.Tour;
 import com.example.TourPlanner.model.TourLog;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
 public class MainController {
+    public Button addTour;
+
+
     @FXML
     private TableView<TourLog> tourLogTableView;
 

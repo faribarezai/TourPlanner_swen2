@@ -18,19 +18,27 @@
     <Region GridPane.columnIndex="0" GridPane.rowIndex="0" prefHeight="50"/>
 
     <!-- Navbar -->
-    <HBox spacing="10" HBox.hgrow="ALWAYS" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2" styleClass="navbar">
-        <Button text="File" styleClass="navbar-label"/>
-        <Separator orientation="VERTICAL"/>
-        <Button text="Edit" styleClass="navbar-label"/>
-        <Separator orientation="VERTICAL"/>
-        <Button text="Options" styleClass="navbar-label"/>
-        <Separator orientation="VERTICAL"/>
-        <!-- <HBox HBox.hgrow="ALWAYS"/>
-         <Separator orientation="VERTICAL"/>
-         <HBox HBox.hgrow="ALWAYS"/>
-         <Separator orientation="VERTICAL"/>-->
-        <Button text="Help" styleClass="navbar-label"/>
-    </HBox>
+    <TabPane GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2" styleClass="navbar" >
+        <tabs>
+            <Tab text="File"  styleClass="navbar-label">
+                    <VBox spacing="10">
+                        <Button text="Open" />
+                        <Button text="Save" />
+                        <!-- Other file-related controls -->
+                    </VBox>
+                <!-- Content for File menu -->
+            </Tab>
+            <Tab text="Edit"  styleClass="navbar-label">
+                <!-- Content for Edit menu -->
+            </Tab>
+            <Tab text="Options"  styleClass="navbar-label">
+                <!-- Content for Options menu -->
+            </Tab>
+            <Tab text="Help"  styleClass="navbar-label">
+                <!-- Content for Help menu -->
+            </Tab>
+        </tabs>
+    </TabPane>
 
 
     <!-- Search -->
@@ -48,12 +56,13 @@
         <!-- Tours -->
         <VBox spacing="10" HBox.hgrow="ALWAYS">
             <HBox spacing="10">
-                <Button text="Tours" />
+                <Label text="Tours" />
+                <!-- Empty Spaces -->
+                <HBox HBox.hgrow="ALWAYS"/>
+                <HBox HBox.hgrow="ALWAYS"/>
                 <!-- Buttons for Tours -->
-                <HBox HBox.hgrow="ALWAYS"/>
-                <HBox HBox.hgrow="ALWAYS"/>
                 <HBox spacing="10">
-                    <Button text="+" />
+                    <Button fx:id="addTour" text= "+" onAction="#addTour" />
                     <Button text="-" />
                     <Button text="..." />
                 </HBox>

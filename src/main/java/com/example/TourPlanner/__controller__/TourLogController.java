@@ -1,4 +1,6 @@
+/*
 package com.example.TourPlanner.controller;
+ */
 
 import com.example.TourPlanner.model.TourLog;
 import com.example.TourPlanner.service.TourLogService;
@@ -7,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/*
 @RestController
 @RequestMapping("/tourLogs")
 public class TourLogController {
@@ -35,3 +38,4 @@ public class TourLogController {
         tourLogService.deleteTourLogById(id);
     }
 }
+*/
