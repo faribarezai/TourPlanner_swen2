@@ -1,4 +1,4 @@
-package com.example.TourPlanner.javaFX;
+package com.example.TourPlanner;
 
 import com.example.TourPlanner.model.Tour;
 import com.example.TourPlanner.model.TourLog;
