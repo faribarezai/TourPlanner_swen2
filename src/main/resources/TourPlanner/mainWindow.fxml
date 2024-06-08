@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.String?>
+
+
+<GridPane xmlns:fx="http://javafx.com/fxml/1"
+          alignment="center"
+          gridLinesVisible="false"
+          hgap="5" vgap="5.0"
+          minHeight="400.0" minWidth="400.0"
+          xmlns="http://javafx.com/javafx/11.0.2"
+          fx:controller="com.example.TourPlanner.MainController">
+
+    <!-- bottom empty space -->
+    <Region GridPane.columnIndex="0" GridPane.rowIndex="0" prefHeight="50"/>
+
+    <!-- Navbar -->
+    <HBox spacing="10" HBox.hgrow="ALWAYS" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2" styleClass="navbar">
+        <Button text="File" styleClass="navbar-label"/>
+        <Separator orientation="VERTICAL"/>
+        <Button text="Edit" styleClass="navbar-label"/>
+        <Separator orientation="VERTICAL"/>
+        <Button text="Options" styleClass="navbar-label"/>
+        <Separator orientation="VERTICAL"/>
+        <!-- <HBox HBox.hgrow="ALWAYS"/>
+         <Separator orientation="VERTICAL"/>
+         <HBox HBox.hgrow="ALWAYS"/>
+         <Separator orientation="VERTICAL"/>-->
+        <Button text="Help" styleClass="navbar-label"/>
+    </HBox>
+
+
+    <!-- Search -->
+    <HBox spacing="10" HBox.hgrow="ALWAYS" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
+        <Label text="Search:"/>
+        <TextField fx:id="searchTextField" HBox.hgrow="ALWAYS"/>
+    </HBox>
+    <Region GridPane.columnIndex="0" GridPane.rowIndex="0" prefHeight="50"/>
+
+    <!-- Tours and General -->
+    <HBox spacing="10" HBox.hgrow="ALWAYS" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2">
+        <!-- Left empty space -->
+        <Region GridPane.columnIndex="0" GridPane.rowIndex="2" prefWidth="50"/>
+
+        <!-- Tours -->
+        <VBox spacing="10" HBox.hgrow="ALWAYS">
+            <HBox spacing="10">
+                <Button text="Tours" />
+                <!-- Buttons for Tours -->
+                <HBox HBox.hgrow="ALWAYS"/>
+                <HBox HBox.hgrow="ALWAYS"/>
+                <HBox spacing="10">
+                    <Button text="+" />
+                    <Button text="-" />
+                    <Button text="..." />
+                </HBox>
+            </HBox>
+
+            <!-- List of Tours -->
+            <ListView fx:id="tourListView" VBox.vgrow="ALWAYS" GridPane.columnIndex="1"/>
+
+        </VBox>
+
+        <!-- General -->
+        <VBox spacing="10" HBox.hgrow="ALWAYS">
+            <HBox spacing="10">
+                <Button text="General" />
+                <Separator orientation="VERTICAL"/>
+                <Button text="Route" />
+                <Separator orientation="VERTICAL"/>
+                <Button text="Misc" />
+            </HBox>
+
+
+            <!-- Map placeholder -->
+            <ListView fx:id="mapPlaceholder" prefWidth="300">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Map not available"/>
+                    </FXCollections>
+                </items>
+            </ListView>
+
+
+            <!-- TourLogs Header-->
+            <VBox spacing="10" HBox.hgrow="ALWAYS">
+                <HBox spacing="10">
+                    <Button text="Tour Logs" />
+                    <HBox HBox.hgrow="ALWAYS"/>
+                    <HBox HBox.hgrow="ALWAYS"/>
+                    <HBox spacing="10">
+                        <Button text="+" />
+                        <Button text="-" />
+                        <Button text="..." />
+                    </HBox>
+                </HBox>
+
+                <!-- Table of TourLogs
+                <HBox spacing="50" HBox.hgrow="ALWAYS"> -->
+                <TableView fx:id="tourLogTableView" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="dateColumn" text="Date" />
+                        <TableColumn fx:id="durationColumn" text="Duration" />
+                        <TableColumn fx:id="distanceColumn" text="Distance" />
+                    </columns>
+                </TableView>
+
+
+            </VBox>
+        </VBox>
+    </HBox>
+
+    <!-- Bottom empty space -->
+    <Region GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="3" prefHeight="100"/>
+
+    <!-- Column constraints -->
+    <columnConstraints>
+        <ColumnConstraints hgrow="ALWAYS" minWidth="200"/>
+        <ColumnConstraints hgrow="ALWAYS" minWidth="200"/>
+    </columnConstraints>
+
+    <!-- Row constraints -->
+    <rowConstraints>
+        <RowConstraints vgrow="SOMETIMES"/>
+        <RowConstraints vgrow="NEVER"/>
+        <RowConstraints vgrow="ALWAYS"/>
+    </rowConstraints>
+    <!-- Right empty space -->
+    <Region GridPane.columnIndex="2" GridPane.rowIndex="0" prefWidth="100"/>
+</GridPane>
+
