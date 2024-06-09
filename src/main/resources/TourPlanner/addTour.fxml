@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.TourPlanner.MainController"
+      spacing="10" alignment="CENTER"
+      padding="10">
+
+    <Label text="Add New Tour" styleClass="header"/>
+
+    <HBox spacing="10">
+        <Label text="Name:"/>
+        <TextField fx:id="tourNameField" HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="Description:"/>
+        <TextField fx:id="tourDescriptionField" HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="From:"/>
+        <TextField fx:id="tourFromField" HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="To:"/>
+        <TextField fx:id="tourToField" HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="Transport Type:"/>
+        <TextField fx:id="transportTypeField" HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <HBox spacing="10">
+        <Button text="Save" onAction="#handleSaveTour"/>
+        <Button text="Cancel" onAction="#handleCancel"/>
+    </HBox>
+</VBox>
