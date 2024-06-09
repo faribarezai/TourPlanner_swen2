@@ -1,11 +1,15 @@
 package com.example.TourPlanner.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Getter
+@Setter
+@Data
 @Entity
 @Table(name = "tourlog")
 public class TourLog {
@@ -28,6 +32,9 @@ public class TourLog {
     @Column
     private Integer rating; // 1.. to 5...
 
+    @ManyToOne
+    @JoinColumn(name = "tour_id", nullable = false)
+    private Tour tour;
 
     public TourLog(LocalDate date, String comment, Integer difficulty, Integer duration, Integer distance, Integer rating) {
         this.date = date;

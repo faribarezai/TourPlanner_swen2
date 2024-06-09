@@ -1,38 +1,34 @@
+
 package com.example.TourPlanner;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-import java.net.URL;
-import java.util.Objects;
-
+@SpringBootApplication
+@Configuration(proxyBeanMethods = false)
 public class Main extends Application {
+
+    private ConfigurableApplicationContext springContext;
+
+    @Override
+    public void init() {
+        springContext = new SpringApplicationBuilder(Main.class).headless(false).run();
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        showStage(primaryStage);
-    }
-
-    public void showStage(Stage primaryStage) throws Exception {
-        URL fxmlUrl = Main.class.getResource("/TourPlanner/mainWindow.fxml");
-        Objects.requireNonNull(fxmlUrl, "FXML file not found: /TourPlanner/mainWindow.fxml");
-        Parent root = FXMLLoader.load(fxmlUrl);
-
-        primaryStage.setTitle("TourPlanner");
-        Scene scene = new Scene(root, 600, 400); // Adjust dimensions as needed
-        primaryStage.setMinWidth(400);
-
-        URL stylesheetUrl = Main.class.getResource("/TourPlanner/styles.css");
-        if (stylesheetUrl != null) {
-            scene.getStylesheets().add(stylesheetUrl.toExternalForm());
-        } else {
-            System.err.println("Stylesheet not found: /TourPlanner/styles.css");
-        }
-
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/resource/TourPlanner/mainWindow.fxml"));
+        fxmlLoader.setControllerFactory(springContext::getBean); // Use Spring to manage controllers
+        Scene scene = new Scene(fxmlLoader.load());
         primaryStage.setScene(scene);
+        primaryStage.setTitle("Tour Planner");
         primaryStage.show();
     }
 
@@ -42,34 +38,3 @@ public class Main extends Application {
 }
 
 
-/*
-import javafx.application.Application;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import org.example.tourplanner.frontend.controller.ControllerFactory;
-import org.example.tourplanner.frontend.controller.FXMLDependencyInjection;
-
-import java.io.IOException;
-
-public class Main extends Application
-{
-    public static Stage stage;
-    public static ControllerFactory controllerFactory = new ControllerFactory();
-
-    @Override
-    public void start(Stage stage) throws IOException
-    {
-        Main.stage = stage;
-        Parent root = FXMLDependencyInjection.load("sites/tours.fxml");
-        Scene scene = new Scene(root, 1000, 800);
-        stage.setScene(scene);
-        stage.show();
-    }
-
-    public static void main(String[] args) {
-        launch();
-    }
-}
-
-*/

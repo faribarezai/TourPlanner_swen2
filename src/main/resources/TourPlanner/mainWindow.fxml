@@ -62,7 +62,7 @@
                 <HBox HBox.hgrow="ALWAYS"/>
                 <!-- Buttons for Tours -->
                 <HBox spacing="10">
-                    <Button fx:id="addTour" text= "+" onAction="#addTour" />
+                    <Button fx:id="addTour" text= "+" onAction="#handleAddTour" />
                     <Button text="-" />
                     <Button text="..." />
                 </HBox>
