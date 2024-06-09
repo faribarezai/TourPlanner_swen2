@@ -1,5 +1,8 @@
+/*
 package com.example.TourPlanner.controller;
 
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import com.example.TourPlanner.model.Tour;
 import com.example.TourPlanner.service.TourService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/tours")
 public class TourController {
+    private static final Logger logger = LogManager.getLogger(TourController.class);
 
     @Autowired
     private TourService tourService;
@@ -26,7 +30,7 @@ public class TourController {
 
     @PostMapping
     public Tour createTour(@RequestBody Tour tour) {
-        return tourService.saveTour(tour);
+        return tourService.addTour(tour);
     }
 
     @DeleteMapping("/{id}")
@@ -40,3 +44,4 @@ public class TourController {
     }
 
 }
+*/

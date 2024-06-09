@@ -1,6 +1,11 @@
 package com.example.TourPlanner.model;
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 // JavaFx main lauft nicht,
@@ -17,6 +22,8 @@ import lombok.Getter;
 //(https://openrouteservice.org/dev , https://tile.openstreetmap.org/ )
 
 @Getter
+@Setter
+@Data
 @Entity
 @Table(name="tour")
 public class Tour {
@@ -33,7 +40,7 @@ public class Tour {
     @Column
     private String tourTo;
     @Column
-    private String tranportType;
+    private String transportType;
     @Column
     private Integer tourDistance;
     @Column
@@ -41,17 +48,15 @@ public class Tour {
     @Column
     private String routeInfos;// image with tour-map
 
-
+    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TourLog> tourLogs = new ArrayList<>();;
 
     public Tour(String name, String description, String from, String to, String transportType) {
         this.name= name;
         this.description = description;
         this.tourFrom= from;
         this.tourTo= to;
-        this.tranportType = transportType;
-        this.tourDistance = getTourDistance();
-        this.estimatedTime = getEstimatedTime();
-        this.routeInfos= getRouteInfos();
+        this.transportType = transportType;
 
     }
     public Tour(String name) {

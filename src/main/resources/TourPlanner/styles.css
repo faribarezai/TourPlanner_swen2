@@ -1,0 +1,18 @@
+.navbar {
+    -fx-background-color: lightgray; /* Set background color */
+    -fx-padding: 5px; /* Add padding around the navbar */
+}
+
+.navbar-label {
+    -fx-font-size: 14px; /* Set font size */
+    -fx-text-fill: black; /* Set text color */
+    -fx-padding: 0 10px; /* Add horizontal padding */
+}
+
+.separator {
+    -fx-background-color: black; /* Set separator color */
+    -fx-padding: 0 5px; /* Add horizontal padding */
+}
+.button:pressed {
+    -fx-background-color: blue; /* Change background color to blue when pressed */
+}

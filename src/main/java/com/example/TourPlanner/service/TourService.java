@@ -5,6 +5,7 @@ import com.example.TourPlanner.repository.TourRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -14,7 +15,13 @@ public class TourService {
    private TourRepository tourRepository;
 
    public List<Tour> getAllTours() {
-      return tourRepository.findAll();
+      List<Tour> list= tourRepository.findAll();
+
+      if(list.isEmpty())
+      return Collections.emptyList(); // Return an empty list
+
+      return list;
+
    }
 
    public Tour getTourById(Long id) {
@@ -25,17 +32,13 @@ public class TourService {
       return tourRepository.findByName(name);
    }
 
-   public Tour saveTour(Tour tour) {
-      return tourRepository.save(tour);
+   public void addTour(Tour tour) {
+      tourRepository.save(tour);
    }
 
    public void deleteTourById(Long id) {
       tourRepository.deleteById(id);
    }
 
-   //public Tour editTour(Tour tour){
-      // return new edited Tour
-
-    //  return tourRepository.editTour(tour);}
 
 }
