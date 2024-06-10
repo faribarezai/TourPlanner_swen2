@@ -11,18 +11,25 @@ import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 @Component
 public class MainController {
+    private final ApplicationContext springContext;
+
+    private final TourViewModel tourViewModel;
+    private final TourService tourService;
 
     @Autowired
-    private TourViewModel tourViewModel;
-
-    @Autowired
-    private TourService tourService;
+    public MainController(ApplicationContext springContext, TourViewModel tourViewModel, TourService tourService) {
+        this.springContext = springContext;
+        this.tourViewModel = tourViewModel;
+        this.tourService = tourService;
+    }
 
     @FXML
     private ListView<String> tourListView;
@@ -48,14 +55,17 @@ public class MainController {
     @FXML
     public void initialize() {
         // Using injected tourViewModel
-        tourListView.setItems(tourViewModel.getTours());
-        tourViewModel.selectedTourProperty().bind(tourListView.getSelectionModel().selectedItemProperty());
+        if (tourViewModel != null) {
+            tourListView.setItems(tourViewModel.getTours());
+            tourViewModel.selectedTourProperty().bind(tourListView.getSelectionModel().selectedItemProperty());
+        }
     }
 
     @FXML
     private void handleAddTour() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/TourPlanner/addTour.fxml"));
-        fxmlLoader.setController(this);
+        fxmlLoader.setControllerFactory(springContext::getBean);
+        //fxmlLoader.setController(this);
         Scene scene = new Scene(fxmlLoader.load());
 
         Stage stage = new Stage();
