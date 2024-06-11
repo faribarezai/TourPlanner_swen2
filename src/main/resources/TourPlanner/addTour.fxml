@@ -4,6 +4,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
 <VBox xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.TourPlanner.MainController"
       spacing="10" alignment="CENTER">
@@ -36,11 +38,21 @@
 
     <HBox spacing="10">
         <Label text="Transport Type:"/>
-        <TextField fx:id="transportTypeField" HBox.hgrow="ALWAYS"/>
+        <ComboBox fx:id="transportTypeComboBox" HBox.hgrow="ALWAYS">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="Bike"/>
+                    <String fx:value="Hike"/>
+                    <String fx:value="Running"/>
+                    <String fx:value="Vacation"/>
+                </FXCollections>
+            </items>
+        </ComboBox>
     </HBox>
 
     <HBox spacing="10">
         <Button text="Save" onAction="#handleSaveTour"/>
         <Button text="Cancel" onAction="#handleCancel"/>
+        <Label fx:id="successLabel" text="" style="-fx-text-fill: green;"/>
     </HBox>
 </VBox>

@@ -19,13 +19,13 @@ public class TourViewModel {
     private static final Logger logger = Logger.getLogger(TourViewModel.class.getName());
 
     private final TourService tourService;
-    private final ObservableList<String> tours = FXCollections.observableArrayList();
+    private ObservableList<String> tours = FXCollections.observableArrayList();
     private final StringProperty selectedTour = new SimpleStringProperty();
 
     @Autowired
     public TourViewModel(TourService tourService) {
         this.tourService = tourService;
-       // loadTours();
+        //this.tours= FXCollections.observableArrayList();
 
        try {
             loadTours();
@@ -35,8 +35,10 @@ public class TourViewModel {
         }
     }
 
-    private void loadTours() {
+
+    public void loadTours() {
        List<Tour> list = tourService.getAllTours();
+       // tours.setAll(tourList.stream().map(Tour::getName).collect(Collectors.toList()));
        logger.log(Level.INFO, "Beginning of loadTours Method in TourViewModel!!");
 
         try {
@@ -49,6 +51,7 @@ public class TourViewModel {
         }
     }
 
+
     public ObservableList<String> getTours() {
         return tours;
     }
@@ -57,22 +60,13 @@ public class TourViewModel {
         return selectedTour;
     }
 
-    public void addTour(String name) {
-        try {
-            Tour tour = new Tour(name);
-            tourService.addTour(tour);
-            tours.add(name);
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "Exception occurred while adding tour", e);
-            throw e;
-        }
-    }
 
     public void removeTour(String name) {
         try {
             Tour tour = tourService.getTourByName(name);
             if (tour != null) {
                 tourService.deleteTourById(tour.getTourID());
+                logger.log(Level.INFO, "Tour deleted succesfully!");
                 tours.remove(name);
             }
         } catch (Exception e) {
@@ -82,17 +76,10 @@ public class TourViewModel {
     }
 
     public void editTour(String oldName, String newName) {
-        try {
-            Tour tour = tourService.getTourByName(oldName);
-            if (tour != null) {
-                tour.setName(newName);
-                tourService.addTour(tour); // Assuming this updates if ID exists
-                tours.remove(oldName);
-                tours.add(newName);
-            }
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "Exception occurred while editing tour", e);
-            throw e;
-        }
+
+    }
+
+    public Tour getTourDetails(String selectedTour) {
+            return tourService.getTourByName(selectedTour);
     }
 }

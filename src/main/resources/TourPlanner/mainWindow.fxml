@@ -63,8 +63,8 @@
                 <!-- Buttons for Tours -->
                 <HBox spacing="10">
                     <Button fx:id="addTour" text= "+" onAction="#handleAddTour" />
-                    <Button text="-" />
-                    <Button text="..." />
+                    <Button fx:id ="removeTour" text="-" onAction="#handleRemoveTour"/>
+                    <Button fx:id="editTour" text="..." onAction="#handleEditTour"/>
                 </HBox>
             </HBox>
 
