@@ -24,7 +24,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/resource/TourPlanner/mainWindow.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/TourPlanner/mainWindow.fxml"));
+
+       // FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/resource/TourPlanner/mainWindow.fxml"));
         fxmlLoader.setControllerFactory(springContext::getBean); // Use Spring to manage controllers
         Scene scene = new Scene(fxmlLoader.load());
         primaryStage.setScene(scene);

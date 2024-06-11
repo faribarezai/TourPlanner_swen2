@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+    <?import javafx.scene.control.*?>
+    <?import javafx.scene.layout.*?>
+    <?import javafx.geometry.Insets?>
+
+    <?import javafx.collections.FXCollections?>
+    <?import java.lang.String?>
+    <VBox xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="com.example.TourPlanner.EditTourController"
+          spacing="10" alignment="CENTER">
+
+        <padding>
+            <Insets top="10" right="10" bottom="10" left="10"/>
+        </padding>
+
+        <Label text="Edit Tour" styleClass="header"/>
+
+        <HBox spacing="10">
+            <Label text="Name:"/>
+            <TextField fx:id="tourNameField" HBox.hgrow="ALWAYS"/>
+        </HBox>
+
+        <HBox spacing="10">
+            <Label text="Description:"/>
+            <TextField fx:id="tourDescriptionField" HBox.hgrow="ALWAYS"/>
+        </HBox>
+
+        <HBox spacing="10">
+            <Label text="From:"/>
+            <TextField fx:id="tourFromField" HBox.hgrow="ALWAYS"/>
+        </HBox>
+
+        <HBox spacing="10">
+            <Label text="To:"/>
+            <TextField fx:id="tourToField" HBox.hgrow="ALWAYS"/>
+        </HBox>
+
+        <HBox spacing="10">
+            <Label text="Transport Type:"/>
+            <ComboBox fx:id="transportTypeComboBox" HBox.hgrow="ALWAYS">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Bike"/>
+                        <String fx:value="Hike"/>
+                        <String fx:value="Running"/>
+                        <String fx:value="Vacation"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+        </HBox>
+
+        <HBox spacing="10">
+            <Button text="Update" onAction="#handleUpdateTour"/>
+            <Button text="Cancel" onAction="#handleCancel"/>
+            <Label fx:id="successLabel" text="" style="-fx-text-fill: green;"/>
+        </HBox>
+    </VBox>
