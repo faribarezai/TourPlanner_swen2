@@ -7,7 +7,7 @@
     <?import javafx.collections.FXCollections?>
     <?import java.lang.String?>
     <VBox xmlns:fx="http://javafx.com/fxml/1"
-          fx:controller="com.example.TourPlanner.EditTourController"
+          fx:controller="com.example.TourPlanner.view.EditTourController"
           spacing="10" alignment="CENTER">
 
         <padding>
