@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.TourPlanner.view.MainController"
+      spacing="10" alignment="CENTER">
+
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <Label text="Add New Tour Log" styleClass="header"/>
+
+    <HBox spacing="10">
+        <Label text="Date:"/>
+        <DatePicker fx:id="tourLogDatePicker" HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="Duration:"/>
+        <Spinner fx:id="durationSpinner" HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="Distance:"/>
+        <Spinner fx:id="distanceSpinner" HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="Difficulty:"/>
+        <ComboBox fx:id="tourLogDifficultyComboBox" HBox.hgrow="ALWAYS">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="Easy"/>
+                    <String fx:value="Medium"/>
+                    <String fx:value="Difficult"/>
+                    <String fx:value="Very Difficult"/>
+                    <String fx:value="Extreme"/>
+                </FXCollections>
+            </items>
+        </ComboBox>
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="Rating:"/>
+        <ComboBox fx:id="tourLogRatingComboBox" HBox.hgrow="ALWAYS">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="★☆☆☆☆"/>
+                    <String fx:value="★★☆☆☆"/>
+                    <String fx:value="★★★☆☆"/>
+                    <String fx:value="★★★★☆"/>
+                    <String fx:value="★★★★★"/>
+                </FXCollections>
+            </items>
+        </ComboBox>
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="Comment:"/>
+        <TextField fx:id="tourLogCommentField" HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="Tour ID:"/>
+        <TextField fx:id="tourLogTourIDField" HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <HBox spacing="10">
+        <Button text="Save" onAction="#handleSaveTourLog"/>
+        <Button text="Cancel" onAction="#handleTourLogCancel"/>
+        <Label fx:id="successLabel" text="" style="-fx-text-fill: green;"/>
+    </HBox>
+
+</VBox>
