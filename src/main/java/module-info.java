@@ -25,4 +25,6 @@ module com.example.TourPlanner {
     exports com.example.TourPlanner.repository;
     exports com.example.TourPlanner.service;
     exports com.example.TourPlanner.viewModel;
+    exports com.example.TourPlanner.view;
+   opens com.example.TourPlanner.view to javafx.fxml;
 }

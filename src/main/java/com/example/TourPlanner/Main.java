@@ -29,6 +29,9 @@ public class Main extends Application {
        // FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/resource/TourPlanner/mainWindow.fxml"));
         fxmlLoader.setControllerFactory(springContext::getBean); // Use Spring to manage controllers
         Scene scene = new Scene(fxmlLoader.load());
+        // Add CSS file to scene
+        scene.getStylesheets().add((getClass().getResource("/TourPlanner/styles.css")).toExternalForm());
+
         primaryStage.setScene(scene);
         primaryStage.setTitle("Tour Planner");
         primaryStage.show();

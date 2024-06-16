@@ -24,3 +24,16 @@
     -fx-padding: 10px;
 }
 
+/* tourDetails */
+.label-title {
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+}
+
+.label-details {
+    /*-fx-font-weight: bold;// Make the text bold */
+    -fx-padding: 10px; /* Add some padding for better spacing */
+    -fx-alignment: center-left; /* Align text to the left */
+}
+
+

@@ -20,32 +20,39 @@ public class TourLog {
     private Long tourlogID;
     @Column
     private LocalDate date;
-
     @Column
     private String comment;
     @Column
-    private Integer difficulty; //1...easy to 5...very difficult
+    private String difficulty; //1...easy to 5...very difficult
     @Column
     private Integer duration; // in minutes
     @Column
-    private Integer distance;
+    private Double distance;
     @Column
-    private Integer rating; // 1.. to 5...
+    private String rating; // stars...
 
     @ManyToOne
     @JoinColumn(name = "tour_id", nullable = false)
     private Tour tour;
 
-    public TourLog(LocalDate date, String comment, Integer difficulty, Integer duration, Integer distance, Integer rating) {
+    public TourLog(LocalDate date, String comment, String difficulty, Integer duration, Double distance, String rating) {
         this.date = date;
         this.comment = comment;
         this.difficulty = difficulty;
         this.duration = duration;
         this.distance = distance;
         this.rating = rating;
+        this.tour= getTour();
 
+    }
+
+    public Tour getTour() {
+       Tour tour = new Tour();
+        return tour;
     }
 
     public TourLog() {
     }
+
+
 }
