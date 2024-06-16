@@ -1,8 +1,12 @@
 package com.example.TourPlanner.view;
 
 import com.example.TourPlanner.model.Tour;
+import com.example.TourPlanner.model.TourLog;
+import com.example.TourPlanner.service.TourLogService;
 import com.example.TourPlanner.service.TourService;
+import com.example.TourPlanner.viewModel.TourLogViewModel;
 import com.example.TourPlanner.viewModel.TourViewModel;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -18,7 +22,7 @@ import org.springframework.stereotype.Component;
 import javafx.scene.image.ImageView;
 
 import java.io.IOException;
-import java.util.Objects;
+import java.time.LocalDate;
 
 @Component
 public class MainController {
@@ -27,15 +31,8 @@ public class MainController {
     private final ApplicationContext springContext;
     private final TourViewModel tourViewModel;
     private final TourService tourService;
-    public Label successLabel;
-
-
-@Autowired
-public MainController(ApplicationContext springContext, TourViewModel tourViewModel, TourService tourService) {
-    this.springContext = springContext;
-    this.tourViewModel = tourViewModel;
-    this.tourService = tourService;
-}
+    private final TourLogViewModel tourLogViewModel;
+    private final TourLogService tourLogService;
 
     @FXML
     private ListView<String> tourListView;
@@ -50,12 +47,9 @@ public MainController(ApplicationContext springContext, TourViewModel tourViewMo
     @FXML
     private TextField tourToField;
     @FXML
-    private VBox tourListViewContainer; // Container for the ListView and details view
-
-    // Tour details fields
+    private VBox tourListViewContainer;
     @FXML
     private Label tourIdLabel;
-
     @FXML
     private Label tourNameLabel;
     @FXML
@@ -72,25 +66,57 @@ public MainController(ApplicationContext springContext, TourViewModel tourViewMo
     private Label tourDistanceLabel;
     @FXML
     private ImageView routeImageView;
+    //TourLog
+    @FXML
+    private DatePicker datePicker;
+    @FXML
+    private ComboBox<String> difficultyComboBox;
+    @FXML
+    private TextField commentField;
+    @FXML
+    private Spinner<Integer> durationSpinner;
+    @FXML
+    private Spinner<Double> distanceSpinner;
+    @FXML
+    private ComboBox<String> ratingComboBox;
+    @FXML
+    private Label successLabel;
+    @FXML
+    private TableView<TourLog> tourLogTableView;
 
+
+    @Autowired
+    public MainController(ApplicationContext springContext, TourViewModel tourViewModel, TourService tourService, TourLogViewModel tourLogViewModel, TourLogService tourLogService) {
+        this.springContext = springContext;
+        this.tourViewModel = tourViewModel;
+        this.tourService = tourService;
+        this.tourLogViewModel = tourLogViewModel;
+        this.tourLogService = tourLogService;
+    }
 
     @FXML
     public void initialize() {
-        // Using injected tourViewModel
         if (tourViewModel != null) {
-           //Bind the list view with the data
             tourListView.setItems(tourViewModel.getTours());
-           //add a listener to handle selection change
             tourViewModel.selectedTourProperty().bind(tourListView.getSelectionModel().selectedItemProperty());
-            // Handle double-click event on tourListView
+
             tourListView.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2) {
                     displayTourDetails();
                 }
             });
         }
-    }
 
+/*
+            SpinnerValueFactory<Double> distanceFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(0.1, 100.0, 1.0, 0.1);
+
+            distanceSpinner.setValueFactory(distanceFactory);
+
+            SpinnerValueFactory<Integer> durationFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1440, 30);
+            durationSpinner.setValueFactory(durationFactory);
+
+*/
+    }
 
     @FXML
     private void handleAddTour() throws IOException {
@@ -113,33 +139,25 @@ public MainController(ApplicationContext springContext, TourViewModel tourViewMo
         String tourTo = tourToField.getText();
         String transportType = transportTypeComboBox.getValue();
 
-        // Validate input fields
         if (tourName.isEmpty() || tourDescription.isEmpty() || tourFrom.isEmpty() || tourTo.isEmpty() || transportType == null) {
             successLabel.setText("All fields must be filled out!");
             successLabel.setStyle("-fx-text-fill: red;");
             return;
         }
-        // when no texField is empty, add Tour to DB via tour service
+
         Tour tour = new Tour(tourName, tourDescription, tourFrom, tourTo, transportType);
         tourService.addTour(tour);
 
-        Stage stage = (Stage) tourNameField.getScene().getWindow();
-        // tour successfully added
         successLabel.setText("Tour saved successfully!");
 
-        //clear texFields, when saved
         tourNameField.setText("");
         tourDescriptionField.setText("");
         tourFromField.setText("");
         tourToField.setText("");
-
     }
-
 
     @FXML
     private void handleCancel() {
-        // Implement your cancel logic here, if any
-        // Clear all fields
         tourNameField.clear();
         tourDescriptionField.clear();
         tourFromField.clear();
@@ -151,8 +169,6 @@ public MainController(ApplicationContext springContext, TourViewModel tourViewMo
         stage.close();
     }
 
-
-
     @FXML
     private void handleRemoveTour() {
         String selectedTour = tourViewModel.selectedTourProperty().get();
@@ -161,25 +177,20 @@ public MainController(ApplicationContext springContext, TourViewModel tourViewMo
         }
     }
 
-
     @FXML
     private void handleEditTour() throws IOException {
-        // Get the selected tour from the view model
         String selectedTour = tourViewModel.selectedTourProperty().get();
         if (selectedTour != null) {
-            // Retrieve the tour details (you need to implement this method in your view model)
             Tour tourToEdit = tourViewModel.getTourDetails(selectedTour);
 
-            // Check if the tour details are retrieved successfully
             if (tourToEdit != null) {
-                // Open a new window or dialog to allow editing of tour details
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/TourPlanner/editTour.fxml"));
                 fxmlLoader.setControllerFactory(springContext::getBean);
 
                 Scene scene = new Scene(fxmlLoader.load());
                 Stage stage = new Stage();
                 EditTourController editTourController = fxmlLoader.getController();
-                editTourController.setTourToEdit(tourToEdit); // Pass the tour details to the controller for editing
+                editTourController.setTourToEdit(tourToEdit);
                 stage.setTitle("Edit Tour");
                 stage.initModality(Modality.WINDOW_MODAL);
                 stage.setScene(scene);
@@ -188,24 +199,6 @@ public MainController(ApplicationContext springContext, TourViewModel tourViewMo
         }
     }
 
-
-// Tour Details
-   /* private void displayTourDetails() {
-        String selectedTour = tourViewModel.selectedTourProperty().get();
-        if (selectedTour != null) {
-            Tour tourDetails = tourViewModel.getTourDetails(selectedTour);
-            logger.info("tourdetails got from db: [{}, {}, {}, {}, {}]", tourDetails.getTourID(), tourDetails.getName(), tourDetails.getDescription(), tourDetails.getTourFrom(), tourDetails.getTourTo());
-
-            if (tourDetails != null) {
-                tourDetailsController.initData(tourDetails); // Pass the tour data to the controller
-                logger.info("Data passed successfully to tourDetails!");
-            }
-        }
-    }
-
-*/
-
-    // Tour Details
     private void displayTourDetails() {
         String selectedTour = tourViewModel.selectedTourProperty().get();
         Tour tourDetails = tourViewModel.getTourDetails(selectedTour);
@@ -214,7 +207,6 @@ public MainController(ApplicationContext springContext, TourViewModel tourViewMo
             initData(tourDetails);
         }
     }
-
 
     public void initData(Tour tour) {
         if (tour == null) {
@@ -239,14 +231,93 @@ public MainController(ApplicationContext springContext, TourViewModel tourViewMo
         } else {
             tourDistanceLabel.setText("Tour Distance:  \tNot available");
         }
-        // Example of setting dynamic image
-        // Replace this with your actual image loading logic
-        // Image mapImage = new Image("path/to/your/image.png");
-        // routeImageView.setImage(mapImage);
     }
 
 
+    //TourLOG
+    @FXML
+    public void handleAddTourLog() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/TourPlanner/addTourLog.fxml"));
+        fxmlLoader.setControllerFactory(springContext::getBean);
+        Scene scene = new Scene(fxmlLoader.load());
+
+        Stage stage = new Stage();
+        stage.setTitle("Add New TourLog");
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.setScene(scene);
+        stage.showAndWait();
+    }
+
+    public void handleRemoveTourLog() {
+        long selectedTourLog = tourLogViewModel.selectedTourLogIdProperty().get();
+        if (selectedTourLog >= 0) {
+            tourLogViewModel.removeTourLog(selectedTourLog);
+        }
+    }
+
+    public void handleEditTourLog() {
+        // TODO
+    }
+
+    @FXML
+    public void handleSaveTourLog() {
+        // Retrieve selected date from DatePicker
+        LocalDate logDate = datePicker.getValue();
+        String comment = commentField.getText();
+        String difficulty = difficultyComboBox.getValue();
+        Integer duration = durationSpinner.getValue();
+        Double distance = distanceSpinner.getValue();
+        String rating = ratingComboBox.getValue();
+
+        if (logDate != null) {
+            System.out.println("Selected Date: " + logDate);
+            // Proceed with saving or processing the selected date
+        } else {
+            System.out.println("Please select a date");
+            // Provide feedback to user about selecting a date
+        }
+
+        if (comment.isEmpty() || difficulty == null || duration == null || distance == null || rating == null) {
+            successLabel.setText("All fields must be filled out!");
+            successLabel.setStyle("-fx-text-fill: red;");
+            return;
+        }
 
 
+        TourLog tourLog = new TourLog(logDate, comment, difficulty, duration, distance, rating);
+        tourLogService.addTourLog(tourLog);
+
+        successLabel.setText("Tour log saved successfully!");
+        datePicker.setValue(null);
+        commentField.setText("");
+        difficultyComboBox.setValue(null);
+        durationSpinner.getValueFactory().setValue(1);
+        distanceSpinner.getValueFactory().setValue(0.1);
+        ratingComboBox.setValue(null);
+    }
+
+    public void handleTourLogCancel() {
+       /*    @FXML
+    private DatePicker datePicker;
+    @FXML
+    private ComboBox<String> difficultyComboBox;
+    @FXML
+    private TextField commentField;
+    @FXML
+    private Spinner<Integer> durationSpinner;
+    @FXML
+    private Spinner<Double> distanceSpinner;
+    @FXML
+    private ComboBox<String> ratingComboBox;
+    @FXML
+    private Label successLabel;
+    @FXML
+    private TableView<TourLog> tourLogTableView;*/
+
+        commentField.clear();
+        successLabel.setText("");
+        Stage stage = (Stage) commentField.getScene().getWindow();
+        stage.close();
+
+    }
 }
-

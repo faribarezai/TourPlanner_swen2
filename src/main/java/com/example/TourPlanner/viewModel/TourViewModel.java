@@ -76,9 +76,6 @@ public class TourViewModel {
         }
     }
 
-    public void editTour(String oldName, String newName) {
-
-    }
 
     public Tour getTourDetails(String selectedTour) {
             return tourService.getTourByName(selectedTour);

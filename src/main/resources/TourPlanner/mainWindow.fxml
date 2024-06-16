@@ -89,9 +89,9 @@
                     <HBox HBox.hgrow="ALWAYS"/>
                     <HBox HBox.hgrow="ALWAYS"/>
                     <HBox spacing="10">
-                        <Button text="+" />
-                        <Button text="-" />
-                        <Button text="..." />
+                        <Button fx:id="addTourLog" text="+" onAction="#handleAddTourLog" />
+                        <Button fx:id ="removeTourLog" text="-" onAction="#handleRemoveTourLog"/>
+                        <Button fx:id="editTourLog" text="..." onAction="#handleEditTourLog"/>
                     </HBox>
                 </HBox>
 
