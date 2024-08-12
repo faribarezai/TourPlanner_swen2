@@ -63,7 +63,11 @@ public class Tour {
         this.name= name;
     }
 
-    public Tour() {
+    public Tour() {}
 
-    }
+    @Override
+    public String toString() {
+        return name;
+        }
+
 }

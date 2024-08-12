@@ -41,7 +41,7 @@
         <!-- Tours -->
         <VBox spacing="10" HBox.hgrow="ALWAYS">
             <HBox spacing="10">
-                <Label text="Tours" />
+                <Label text="Tours" styleClass="label-title"/>
                 <!-- Empty Spaces -->
                 <HBox HBox.hgrow="ALWAYS"/>
                 <HBox HBox.hgrow="ALWAYS"/>
@@ -49,7 +49,7 @@
                 <HBox spacing="10">
                     <Button fx:id="addTour" text="+" onAction="#handleAddTour" />
                     <Button fx:id ="removeTour" text="-" onAction="#handleRemoveTour"/>
-                    <Button fx:id="editTour" text="..." onAction="#handleEditTour"/>
+                    <Button fx:id="editTour" text="edit" onAction="#handleEditTour"/>
                 </HBox>
             </HBox>
 
@@ -85,7 +85,7 @@
             <!-- TourLogs Header-->
             <VBox spacing="10">
                 <HBox spacing="10">
-                    <Label text="Tour Logs" />
+                    <Label text="Tour Logs" styleClass="label-title"/>
                     <HBox HBox.hgrow="ALWAYS"/>
                     <HBox HBox.hgrow="ALWAYS"/>
                     <HBox spacing="10">

@@ -14,7 +14,7 @@
         <Insets top="10" right="10" bottom="10" left="10"/>
     </padding>
 
-    <Label text="Add New Tour" styleClass="header"/>
+    <Label text="Add a new Tour" styleClass="header"/>
 
     <HBox spacing="10">
         <Label text="Name:"/>

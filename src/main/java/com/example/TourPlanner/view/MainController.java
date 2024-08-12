@@ -6,6 +6,8 @@ import com.example.TourPlanner.service.TourLogService;
 import com.example.TourPlanner.service.TourService;
 import com.example.TourPlanner.viewModel.TourLogViewModel;
 import com.example.TourPlanner.viewModel.TourViewModel;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,6 +25,10 @@ import javafx.scene.image.ImageView;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.hibernate.internal.util.collections.ArrayHelper.forEach;
 
 @Component
 public class MainController {
@@ -35,7 +41,7 @@ public class MainController {
     private final TourLogService tourLogService;
 
     @FXML
-    private ListView<String> tourListView;
+    private ListView<Tour> tourListView;
     @FXML
     private ComboBox<String> transportTypeComboBox;
     @FXML
@@ -80,6 +86,8 @@ public class MainController {
     @FXML
     private ComboBox<String> ratingComboBox;
     @FXML
+    private ComboBox<Long> tourIdComboBox;
+    @FXML
     private Label successLabel;
     @FXML
     private TableView<TourLog> tourLogTableView;
@@ -94,9 +102,66 @@ public class MainController {
         this.tourLogService = tourLogService;
     }
 
+
+
     @FXML
     public void initialize() {
         if (tourViewModel != null) {
+            // Set the items in the ListView with ObservableList<Tour>
+            tourListView.setItems(tourViewModel.getTours());
+
+            // Customize the ListView to display the Tour name
+            tourListView.setCellFactory(lv -> new ListCell<Tour>() {
+                @Override
+                protected void updateItem(Tour item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty ? null : item.getName()); // Display the name of the Tour
+                }
+            });
+
+            // Bind the selected item to the selectedTourProperty
+            tourListView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+                if (newSelection != null) {
+                    tourViewModel.selectedTourProperty().set(newSelection.getName());
+                }
+            });
+
+            // Handle double-clicks to display tour details
+            tourListView.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2) {
+                    displayTourDetails();
+                }
+            });
+        }
+
+        // Initialize distanceSpinner with double values and set a default value
+        SpinnerValueFactory<Double> distanceFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(0.1, 100.0, 1.0, 0.1);
+
+        // Initialize durationSpinner with integer values and set a default value
+        SpinnerValueFactory<Integer> durationFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1440, 30);
+
+        List<Long> tourIds = tourService.getAllTourIds();
+        logger.info("List of Tour Ids: " + tourIds);
+
+        if (tourIds != null && !tourIds.isEmpty() && tourIdComboBox != null) {
+            tourIdComboBox.getSelectionModel().selectFirst();
+            tourIdComboBox.setItems(FXCollections.observableArrayList(tourIds));
+        } else {
+            if (tourIdComboBox != null) {
+                tourIdComboBox.setItems(FXCollections.observableArrayList());
+                tourIdComboBox.setPromptText("No Tours Available");
+            }
+        }
+    }
+
+/*
+
+
+    @FXML
+    public void initialize() {
+        if (tourViewModel != null) {
+           // List list= tourViewModel.getTours().stream().map(Tour::getName).collect(Collectors.toList());
+
             tourListView.setItems(tourViewModel.getTours());
             tourViewModel.selectedTourProperty().bind(tourListView.getSelectionModel().selectedItemProperty());
 
@@ -107,16 +172,36 @@ public class MainController {
             });
         }
 
-/*
-            SpinnerValueFactory<Double> distanceFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(0.1, 100.0, 1.0, 0.1);
 
-            distanceSpinner.setValueFactory(distanceFactory);
 
-            SpinnerValueFactory<Integer> durationFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1440, 30);
-            durationSpinner.setValueFactory(durationFactory);
+        // Initialize distanceSpinner with double values and set a default value
+        SpinnerValueFactory<Double> distanceFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(0.1, 100.0, 1.0, 0.1);
+       // distanceSpinner.setValueFactory(distanceFactory);
+        //distanceSpinner.getValueFactory().setValue(1.0); // Set default value
 
-*/
+        // Initialize durationSpinner with integer values and set a default value
+        SpinnerValueFactory<Integer> durationFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1440, 30);
+       // durationSpinner.setValueFactory(durationFactory);
+        //durationSpinner.getValueFactory().setValue(30); // Set default value
+
+        List<Long> tourIds = tourService.getAllTourIds();
+        logger.info("List of Tour Ids: "+ tourIds);
+
+        if (tourIds != null && !tourIds.isEmpty() && tourIdComboBox != null) {
+          tourIdComboBox.getSelectionModel().selectFirst();
+          tourIdComboBox.setItems(FXCollections.observableArrayList(tourIds));
+
+        } else {
+            if (tourIdComboBox != null) {
+                tourIdComboBox.setItems(FXCollections.observableArrayList());
+                tourIdComboBox.setPromptText("No Tours Available");
+            }
+        }
+
+
     }
+    */
+
 
     @FXML
     private void handleAddTour() throws IOException {
@@ -148,12 +233,18 @@ public class MainController {
         Tour tour = new Tour(tourName, tourDescription, tourFrom, tourTo, transportType);
         tourService.addTour(tour);
 
+        //update the tour in the viewModel
+        tourViewModel.updateTour(tour);
+
         successLabel.setText("Tour saved successfully!");
 
         tourNameField.setText("");
         tourDescriptionField.setText("");
         tourFromField.setText("");
         tourToField.setText("");
+        tourTransportTypeLabel.setText("");
+
+
     }
 
     @FXML
@@ -174,8 +265,11 @@ public class MainController {
         String selectedTour = tourViewModel.selectedTourProperty().get();
         if (selectedTour != null) {
             tourViewModel.removeTour(selectedTour);
+            // remove directly from observable List
+            tourViewModel.getTours().removeIf(tour -> tour.getName().equals(selectedTour));
         }
     }
+
 
     @FXML
     private void handleEditTour() throws IOException {
@@ -234,6 +328,7 @@ public class MainController {
     }
 
 
+//-----------------------------------------------TOUR LOG------------------------------------------------------------------
     //TourLOG
     @FXML
     public void handleAddTourLog() throws IOException {
@@ -269,25 +364,43 @@ public class MainController {
         Double distance = distanceSpinner.getValue();
         String rating = ratingComboBox.getValue();
 
-        if (logDate != null) {
-            System.out.println("Selected Date: " + logDate);
-            // Proceed with saving or processing the selected date
-        } else {
-            System.out.println("Please select a date");
-            // Provide feedback to user about selecting a date
+        List<Long> tourIds = tourService.getAllTourIds();
+        logger.info("List of Tour Ids: "+ tourIds);
+
+        /*
+        if (tourIds != null && !tourIds.isEmpty()) {
+            tourIdComboBox.setItems(FXCollections.observableArrayList(tourIds));
         }
 
-        if (comment.isEmpty() || difficulty == null || duration == null || distance == null || rating == null) {
+
+        List<Long> tourIds = tourService.getAllTourIds();
+        */
+
+        if (tourIds != null && !tourIds.isEmpty()) {
+            tourIdComboBox.setItems(FXCollections.observableArrayList(tourIds));
+           // tourIdComboBox.getSelectionModel().selectFirst(); // Optionally select the first item
+        } else {
+            tourIdComboBox.setItems(FXCollections.observableArrayList());
+            tourIdComboBox.setPromptText("No Tours Available"); // Display a prompt text if no tours are available
+        }
+
+
+        Long selectedTourId = tourIdComboBox.getValue();
+
+        if (logDate == null || comment.isEmpty() || difficulty == null || duration == null || distance == null || rating == null) {
             successLabel.setText("All fields must be filled out!");
             successLabel.setStyle("-fx-text-fill: red;");
             return;
         }
 
-
+        Tour selectedTour = tourService.getTourById(selectedTourId);
+         // set the values to tourlog
         TourLog tourLog = new TourLog(logDate, comment, difficulty, duration, distance, rating);
+        tourLog.setTour(selectedTour);
         tourLogService.addTourLog(tourLog);
 
         successLabel.setText("Tour log saved successfully!");
+
         datePicker.setValue(null);
         commentField.setText("");
         difficultyComboBox.setValue(null);
@@ -297,26 +410,18 @@ public class MainController {
     }
 
     public void handleTourLogCancel() {
-       /*    @FXML
-    private DatePicker datePicker;
-    @FXML
-    private ComboBox<String> difficultyComboBox;
-    @FXML
-    private TextField commentField;
-    @FXML
-    private Spinner<Integer> durationSpinner;
-    @FXML
-    private Spinner<Double> distanceSpinner;
-    @FXML
-    private ComboBox<String> ratingComboBox;
-    @FXML
-    private Label successLabel;
-    @FXML
-    private TableView<TourLog> tourLogTableView;*/
-
+        // Clear all input fields
+        datePicker.setValue(null);
         commentField.clear();
+        difficultyComboBox.getSelectionModel().clearSelection();
+        durationSpinner.getValueFactory().setValue(0); // Reset to default value
+        distanceSpinner.getValueFactory().setValue(0.0); // Reset to default value
+        ratingComboBox.getSelectionModel().clearSelection();
+        tourIdComboBox.getSelectionModel().clearSelection();
+
+
         successLabel.setText("");
-        Stage stage = (Stage) commentField.getScene().getWindow();
+        Stage stage = (Stage) datePicker.getScene().getWindow();
         stage.close();
 
     }

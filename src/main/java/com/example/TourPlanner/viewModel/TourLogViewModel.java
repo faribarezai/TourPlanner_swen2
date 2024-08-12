@@ -66,11 +66,4 @@ public class TourLogViewModel {
         return selectedTourLogId;
     }
 
-    public long getSelectedTourLogId() {
-        return selectedTourLogId.get();
-    }
-
-    public void setSelectedTourLogId(long id) {
-        selectedTourLogId.set(id);
-    }
 }
