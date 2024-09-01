@@ -57,6 +57,9 @@ public class Tour {
         this.tourFrom= from;
         this.tourTo= to;
         this.transportType = transportType;
+        this.routeInfos= getRouteInfos();
+        this.estimatedTime =getEstimatedTime();
+        this.tourDistance= getTourDistance();
 
     }
     public Tour(String name) {

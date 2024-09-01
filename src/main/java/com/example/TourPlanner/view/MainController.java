@@ -162,15 +162,11 @@ public class MainController {
                 });
             }
 
-                // Initial population of the ComboBox
+                // Initial population of the ComboBox (for selecting a tourId )
                 updateTourIdComboBox();
 
-                // Initialize UI components
-                System.out.println("-----------------DatePicker-----------" + datePicker);
-                System.out.println("-----------------TourID from ComboBox : -----------" + tourIdComboBox);
-
                 // Initialize TableColumns
-                if (tourLogDate != null) tourLogDate.setCellValueFactory(new PropertyValueFactory<>("date"));
+                if (tourLogDate != null) tourLogDate.setCellValueFactory(new PropertyValueFactory<>("date")); //String "date" is from model
                 if (tourLogDuration != null) tourLogDuration.setCellValueFactory(new PropertyValueFactory<>("duration"));
                 if (tourLogDistance != null) tourLogDistance.setCellValueFactory(new PropertyValueFactory<>("distance"));
                 if (tourLogDifficulty != null) tourLogDifficulty.setCellValueFactory(new PropertyValueFactory<>("difficulty"));
@@ -178,27 +174,24 @@ public class MainController {
                 if (tourLogComment != null) tourLogComment.setCellValueFactory(new PropertyValueFactory<>("comment"));
                 if(tourLogTourId !=null) tourLogTourId.setCellValueFactory(new PropertyValueFactory<>("tour_id"));
 
-                /*
-                if (tourIdComboBox != null) {
-                    tourIdComboBox.setCellValueFactory(cellData -> {
-                        Long tourId = cellData.getValue().getTourId(); // Get the Tour ID
-                        return new SimpleStringProperty(tourId != null ? tourId.toString() : ""); // Convert to String
-                    });
-                }*/
-                // Initialize Spinners with values
-
-                /*SpinnerValueFactory<Double> distanceFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(0.1, 100.0, 1.0, 0.1);
-                distanceSpinner.setValueFactory(distanceFactory);
-
-
-                SpinnerValueFactory<Integer> durationFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1440, 30);
-                durationSpinner.setValueFactory(durationFactory);
-                */
 
                 // Set items for the TableView
                 if (tourLogViewModel != null) {
                     tourLogTableView.setItems(tourLogViewModel.getTourLogs());
+
+                    // Handle double-clicks to display tour details
+                    tourLogTableView.setOnMouseClicked(event -> {
+                        if (event.getClickCount() == 2) {
+                            displayTourDetails();
+                        }
+                    });
                 }
+
+                tourLogTableView.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) ->{
+                    if (newValue != null) {
+                        displayTourDetails(newValue);
+                    }
+                } );
 
                 System.out.println("-----------------------------TEST_TEST_TEST_TEST_TEST_TEST_TEST_TEST_TEST_TEST_TEST_TEST_TEST-----------------------");
                 System.out.println("TourId: " + tourIdComboBox);
@@ -361,11 +354,32 @@ public class MainController {
         } else {
             tourDistanceLabel.setText("Tour Distance:  \tNot available");
         }
+
+        if(tour.getRouteInfos() !=null) {
+            routeInfoLabel.setText("Route Infos:  \t\t" + tour.getRouteInfos());
+        }
+        else {
+            routeInfoLabel.setText("Route Infos:  \t\tNot available");
+        }
     }
 
 
 //-----------------------------------------------TOUR LOG------------------------------------------------------------------
     //TourLOG
+
+    // when clicking on a TourLog, its corresponding Tourdetail shall display
+    private void displayTourDetails(TourLog selectedTourlog) {
+        Long tourId = selectedTourlog.getTourId();
+
+        //fetch tour details throught the ID
+        Tour tourDetails = tourService.getTourById(tourId);
+
+        if(tourDetails != null) {
+            initData(tourDetails);
+        }
+
+    }
+
     @FXML
     public void handleAddTourLog() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/TourPlanner/addTourLog.fxml"));
@@ -382,9 +396,6 @@ public class MainController {
 
     @FXML
     public void handleSaveTourLog() {
-        // First, update the IDs in the ComboBox to match the actual IDs
-       // updateTourIdComboBox();
-
         // Retrieve the selected date from DatePicker
         LocalDate logDate = datePicker.getValue();
         logger.info("Where is my Date? : " + logDate);
@@ -438,61 +449,6 @@ public class MainController {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-/*
-@FXML
-public void handleSaveTourLog() {
-
-    // Retrieve selected date from DatePicker
-    LocalDate logDate = datePicker.getValue();
-    logger.info("Where is my Date? : "+ logDate);
-
-    String comment = commentField.getText();
-    String difficulty = difficultyComboBox.getValue();
-    Integer duration = durationSpinner.getValue();
-    Double distance = distanceSpinner.getValue();
-    String rating = ratingComboBox.getValue();
-    Long tourID= tourIdComboBox.getValue();
-    logger.info("selectedTourId: "+ tourID);
-
-    if (logDate == null || comment.isEmpty() || difficulty == null || duration == null || distance == null || rating == null) {
-        successLabel.setText("All fields must be filled out!");
-        successLabel.setStyle("-fx-text-fill: red;");
-        return;
-    }
-
-    Tour selectedTour = tourService.getTourById(tourID);
-    // set the values to tourlog
-    TourLog tourLog = new TourLog(logDate, comment, difficulty, duration, distance, rating);
-    tourLog.setTour(selectedTour);
-    tourLogService.addTourLog(tourLog);
-
-    // update the tourlog in the viewModel
-    tourLogViewModel.updateTourLog(tourLog);
-
-    successLabel.setText("Tour log saved successfully!");
-    successLabel.setStyle("-fx-text-fill: green;");
-
-    //set all fields to null starting to add a new Tourlog
-    datePicker.setValue(null);
-    commentField.setText("");
-    difficultyComboBox.setValue(null);
-    durationSpinner.getValueFactory().setValue(1);
-    distanceSpinner.getValueFactory().setValue(0.1);
-    ratingComboBox.setValue(null);
-    tourIdComboBox.setValue(null);
-}
-*/
 
 
     public void handleRemoveTourLog() {
