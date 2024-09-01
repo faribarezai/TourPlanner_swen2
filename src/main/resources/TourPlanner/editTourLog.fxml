@@ -1,14 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="TourPlanner.EditTourLog"
-            prefHeight="400.0" prefWidth="600.0">
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<?import java.lang.Long?>
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.TourPlanner.view.EditTourLogController"
+      spacing="10" alignment="CENTER">
 
-</AnchorPane>
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <Label text="Add New Tour Log" styleClass="header"/>
+
+    <HBox spacing="10">
+        <Label text="Date:"/>
+        <DatePicker fx:id="datePicker" HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="Duration:"/>
+        <Spinner fx:id="durationSpinner" HBox.hgrow="ALWAYS">
+            <valueFactory>
+                <SpinnerValueFactory.IntegerSpinnerValueFactory min="1" max="1440" initialValue="1"/>
+            </valueFactory>
+        </Spinner>
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="Distance:"/>
+        <Spinner fx:id="distanceSpinner" HBox.hgrow="ALWAYS">
+            <valueFactory>
+                <SpinnerValueFactory.DoubleSpinnerValueFactory min="0.1" max="100.0" initialValue="1.0" amountToStepBy="0.1"/>
+            </valueFactory>
+        </Spinner>
+    </HBox>
+    <HBox spacing="10">
+        <Label text="Difficulty:"/>
+        <ComboBox fx:id="difficultyComboBox" HBox.hgrow="ALWAYS">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="Easy"/>
+                    <String fx:value="Medium"/>
+                    <String fx:value="Difficult"/>
+                    <String fx:value="Very Difficult"/>
+                    <String fx:value="Extreme"/>
+                </FXCollections>
+            </items>
+        </ComboBox>
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="Rating:"/>
+        <ComboBox fx:id="ratingComboBox" HBox.hgrow="ALWAYS">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="★☆☆☆☆"/>
+                    <String fx:value="★★☆☆☆"/>
+                    <String fx:value="★★★☆☆"/>
+                    <String fx:value="★★★★☆"/>
+                    <String fx:value="★★★★★"/>
+                </FXCollections>
+            </items>
+        </ComboBox>
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="Comment:"/>
+        <TextField fx:id="commentField" HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="tour ID:"/>
+        <ComboBox fx:id="tourIdComboBox" HBox.hgrow="ALWAYS">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <Long fx:value="1"/>
+                    <Long fx:value="2"/>
+                    <Long fx:value="13"/>
+                    <Long fx:value="21"/>
+                    <Long fx:value="23"/>
+                </FXCollections>
+            </items>
+        </ComboBox>
+    </HBox>
+
+    <HBox spacing="10">
+        <Button text="Update" onAction="#handleUpdateTourLog"/>
+        <Button text="Cancel" onAction="#handleCancel"/>
+        <Label fx:id="successLabel" text="" style="-fx-text-fill: green;"/>
+    </HBox>
+
+</VBox>

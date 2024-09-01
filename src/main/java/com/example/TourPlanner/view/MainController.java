@@ -468,10 +468,27 @@ public class MainController {
        // }
     }
 
-    public void handleEditTourLog() {
+    public void handleEditTourLog() throws IOException {
+
         TourLog selectedTourLog = tourLogTableView.getSelectionModel().getSelectedItem();
         if (selectedTourLog != null) {
             // Make your changes to the selectedTourLog here
+            TourLog tourLogToEdit = tourLogViewModel.getTourLogByID(selectedTourLog.getTourlogID());
+
+            if (tourLogToEdit != null) {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/TourPlanner/editTourLog.fxml"));
+                fxmlLoader.setControllerFactory(springContext::getBean);
+
+                Scene scene = new Scene(fxmlLoader.load());
+                Stage stage = new Stage();
+                EditTourLogController editTourLogController = fxmlLoader.getController();
+                editTourLogController.setTourLogToEdit(tourLogToEdit);
+                stage.setTitle("Edit TourLog");
+                stage.initModality(Modality.WINDOW_MODAL);
+                stage.setScene(scene);
+                stage.showAndWait();
+            }
+
 
             // Update the tour log in the ViewModel
             tourLogViewModel.updateTourLog(selectedTourLog);

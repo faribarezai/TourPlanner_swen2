@@ -76,4 +76,8 @@ public class TourLogViewModel {
     public void updateTourLog(TourLog updatedTourLog) {
         tourLogService.updateTourLog(updatedTourLog);
     }
+
+    public TourLog getTourLogByID(Long T_id) {
+        return tourLogService.getTourLogById(T_id);
+    }
 }
