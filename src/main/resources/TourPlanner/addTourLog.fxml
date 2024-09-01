@@ -76,7 +76,7 @@
 
     <HBox spacing="10">
         <Label text="tour ID:"/>
-        <ComboBox fx:id="touridComboBox" HBox.hgrow="ALWAYS">
+        <ComboBox fx:id="tourIdComboBox" HBox.hgrow="ALWAYS">
             <items>
                 <FXCollections fx:factory="observableArrayList">
                     <Long fx:value="1"/>

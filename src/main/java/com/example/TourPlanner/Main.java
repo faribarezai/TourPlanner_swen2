@@ -9,7 +9,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+import java.util.Objects;
 
 @SpringBootApplication
 @Configuration(proxyBeanMethods = false)
@@ -30,7 +31,7 @@ public class Main extends Application {
         fxmlLoader.setControllerFactory(springContext::getBean); // Use Spring to manage controllers
         Scene scene = new Scene(fxmlLoader.load());
         // Add CSS file to scene
-        scene.getStylesheets().add((getClass().getResource("/TourPlanner/styles.css")).toExternalForm());
+        scene.getStylesheets().add((Objects.requireNonNull(getClass().getResource("/TourPlanner/styles.css"))).toExternalForm());
 
         primaryStage.setScene(scene);
         primaryStage.setTitle("Tour Planner");

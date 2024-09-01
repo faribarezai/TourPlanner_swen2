@@ -6,6 +6,7 @@ import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +20,7 @@ public class TourLogViewModel {
     private static final Logger logger = LogManager.getLogger(TourLogViewModel.class.getName());
 
     private final TourLogService tourLogService;
+    @Getter
     private ObservableList<TourLog> tourLogs = FXCollections.observableArrayList();
     private final LongProperty selectedTourLogId = new SimpleLongProperty();
 
@@ -36,10 +38,6 @@ public class TourLogViewModel {
             logger.error("Error loading TourLogs", e);
             // Handle error
         }
-    }
-
-    public ObservableList<TourLog> getTourLogs() {
-        return tourLogs;
     }
 
     public void removeTourLog(Long id) {
@@ -66,4 +64,9 @@ public class TourLogViewModel {
         return selectedTourLogId;
     }
 
+
+
+    public void updateTourLog(TourLog updatedTourLog) {
+        tourLogService.updateTourLog(updatedTourLog);
+    }
 }
