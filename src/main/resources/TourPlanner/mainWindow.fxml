@@ -91,7 +91,7 @@
                     <HBox spacing="10">
                         <Button fx:id="addTourLog" text="+" onAction="#handleAddTourLog" />
                         <Button fx:id ="removeTourLog" text="-" onAction="#handleRemoveTourLog"/>
-                        <Button fx:id="editTourLog" text="..." onAction="#handleEditTourLog"/>
+                        <Button fx:id="editTourLog" text="edit" onAction="#handleEditTourLog"/>
                     </HBox>
                 </HBox>
 

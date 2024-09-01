@@ -380,6 +380,7 @@ public class MainController {
 
     }
 
+    // ADD into Tourlog
     @FXML
     public void handleAddTourLog() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/TourPlanner/addTourLog.fxml"));
@@ -433,7 +434,7 @@ public class MainController {
         tourLogService.addTourLog(tourLog);
 
         // Update the tour log in the ViewModel to reflect changes in the UI
-       // tourLogViewModel.updateTourLog(tourLog);
+         tourLogViewModel.updateTourLog(tourLog);
 
         successLabel.setText("Tour log saved successfully!");
         successLabel.setStyle("-fx-text-fill: green;");
@@ -452,14 +453,29 @@ public class MainController {
 
 
     public void handleRemoveTourLog() {
-        long selectedTourLog = tourLogViewModel.selectedTourLogIdProperty().get();
-        if (selectedTourLog >= 0) {
-            tourLogViewModel.removeTourLog(selectedTourLog);
+        TourLog selectedTourLog = tourLogTableView.getSelectionModel().getSelectedItem();
+        if (selectedTourLog != null) {
+            // Remove the TourLog from the database
+            tourLogService.deleteTourLogById(selectedTourLog.getTourlogID());
+
+            // Remove the TourLog from the ViewModel
+            tourLogViewModel.removeTourLog(selectedTourLog.getTourlogID());
         }
+
+       // long selectedTourLog = tourLogViewModel.selectedTourLogIdProperty().get();
+       // if (selectedTourLog >= 0) {
+         //   tourLogViewModel.removeTourLog(selectedTourLog);
+       // }
     }
 
     public void handleEditTourLog() {
-        // TODO
+        TourLog selectedTourLog = tourLogTableView.getSelectionModel().getSelectedItem();
+        if (selectedTourLog != null) {
+            // Make your changes to the selectedTourLog here
+
+            // Update the tour log in the ViewModel
+            tourLogViewModel.updateTourLog(selectedTourLog);
+        }
     }
 
 

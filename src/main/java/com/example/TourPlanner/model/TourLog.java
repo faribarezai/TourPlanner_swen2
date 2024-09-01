@@ -38,6 +38,11 @@ public class TourLog {
     public Long getTourId() {
         return tour != null ? tour.getTourID() : null;
     }
+    public void setTourId(long id) {
+        tour = new Tour();
+        tour.setTourID(id);
+    }
+
 
     public TourLog(LocalDate date, String comment, String difficulty, Integer duration, Double distance, String rating) {
         this.date = date;
