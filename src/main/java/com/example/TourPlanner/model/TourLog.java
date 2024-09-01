@@ -31,7 +31,7 @@ public class TourLog {
     @Column
     private String rating; // stars...
 
-    @ManyToOne (cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "tour_id", nullable = false)
     private Tour tour;
 

@@ -170,7 +170,7 @@ public class MainController {
                 System.out.println("-----------------TourID from ComboBox : -----------" + tourIdComboBox);
 
                 // Initialize TableColumns
-                if (tourLogDate != null) tourLogDate.setCellValueFactory(new PropertyValueFactory<>("logDate"));
+                if (tourLogDate != null) tourLogDate.setCellValueFactory(new PropertyValueFactory<>("date"));
                 if (tourLogDuration != null) tourLogDuration.setCellValueFactory(new PropertyValueFactory<>("duration"));
                 if (tourLogDistance != null) tourLogDistance.setCellValueFactory(new PropertyValueFactory<>("distance"));
                 if (tourLogDifficulty != null) tourLogDifficulty.setCellValueFactory(new PropertyValueFactory<>("difficulty"));
@@ -380,11 +380,78 @@ public class MainController {
     }
 
 
+    @FXML
+    public void handleSaveTourLog() {
+        // First, update the IDs in the ComboBox to match the actual IDs
+       // updateTourIdComboBox();
+
+        // Retrieve the selected date from DatePicker
+        LocalDate logDate = datePicker.getValue();
+        logger.info("Where is my Date? : " + logDate);
+
+        String comment = commentField.getText();
+        String difficulty = difficultyComboBox.getValue();
+        Integer duration = durationSpinner.getValue();
+        Double distance = distanceSpinner.getValue();
+        String rating = ratingComboBox.getValue();
+        Long tourID = tourIdComboBox.getValue();
+        logger.info("selectedTourId: " + tourID);
+
+        // Check if all required fields are filled out
+        if (logDate == null || comment.isEmpty() || difficulty == null || duration == null || distance == null || rating == null) {
+            successLabel.setText("All fields must be filled out!");
+            successLabel.setStyle("-fx-text-fill: red;");
+            return;
+        }
+
+        // Retrieve the Tour entity from the database by its ID
+        Tour selectedTour = tourService.getTourById(tourID);
+
+        if (selectedTour == null) {
+            successLabel.setText("Selected tour not found!");
+            successLabel.setStyle("-fx-text-fill: red;");
+            return;
+        }
+
+        // Create and persist the TourLog
+        TourLog tourLog = new TourLog(logDate, comment, difficulty, duration, distance, rating);
+        tourLog.setTour(selectedTour);
+
+         updateTourIdComboBox();
+        // Save the TourLog using the service
+        tourLogService.addTourLog(tourLog);
+
+        // Update the tour log in the ViewModel to reflect changes in the UI
+       // tourLogViewModel.updateTourLog(tourLog);
+
+        successLabel.setText("Tour log saved successfully!");
+        successLabel.setStyle("-fx-text-fill: green;");
+
+        // Reset all fields for adding a new TourLog
+        datePicker.setValue(null);
+        commentField.setText("");
+        difficultyComboBox.setValue(null);
+        durationSpinner.getValueFactory().setValue(1);
+        distanceSpinner.getValueFactory().setValue(0.1);
+        ratingComboBox.setValue(null);
+        tourIdComboBox.setValue(null);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 @FXML
 public void handleSaveTourLog() {
-    //first update the Ids in the Combobox to match the actual IDs
-    //updateTourIdComboBox();
-
 
     // Retrieve selected date from DatePicker
     LocalDate logDate = datePicker.getValue();
@@ -397,30 +464,6 @@ public void handleSaveTourLog() {
     String rating = ratingComboBox.getValue();
     Long tourID= tourIdComboBox.getValue();
     logger.info("selectedTourId: "+ tourID);
-
-
-/*
-    List<Tour> tours = tourService.getAllTours();
-    //save all names in a list
-    List<Long> tourIDs = tours.stream().map(Tour::getTourID).toList();
-
-    logger.info("List of Tour IDs: "+ tourIDs);
-
-
-// check if the list of tourIds is empty or null
-    if (!tourIDs.isEmpty()) {
-        tourIdComboBox.setItems(FXCollections.observableArrayList(tourIDs));
-         tourIdComboBox.getSelectionModel().selectFirst(); // Optionally select the first item
-    } else {
-        tourIdComboBox.setItems(FXCollections.observableArrayList());
-        tourIdComboBox.setPromptText("No Tours Available"); // Display a prompt text if no tours are available
-    }
-
-
-    //select a tour by ID
-    Long selectedTourId = tourIdComboBox.getValue();
-    logger.info("selectedTourId: "+ selectedTourId);
-*/
 
     if (logDate == null || comment.isEmpty() || difficulty == null || duration == null || distance == null || rating == null) {
         successLabel.setText("All fields must be filled out!");
@@ -449,6 +492,7 @@ public void handleSaveTourLog() {
     ratingComboBox.setValue(null);
     tourIdComboBox.setValue(null);
 }
+*/
 
 
     public void handleRemoveTourLog() {
