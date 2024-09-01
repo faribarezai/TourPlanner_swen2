@@ -40,6 +40,13 @@ public class TourLogViewModel {
         }
     }
 
+    public void refreshTourLogs() {
+        if(tourLogs !=null) {
+            tourLogs.clear();
+            tourLogs.addAll(tourLogService.getAllTourLogs());
+        }
+    }
+
     public void removeTourLog(Long id) {
         try {
             TourLog tourLogToRemove = null;

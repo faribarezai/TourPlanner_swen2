@@ -434,7 +434,7 @@ public class MainController {
         tourLogService.addTourLog(tourLog);
 
         // Update the tour log in the ViewModel to reflect changes in the UI
-         tourLogViewModel.updateTourLog(tourLog);
+         tourLogViewModel.refreshTourLogs();
 
         successLabel.setText("Tour log saved successfully!");
         successLabel.setStyle("-fx-text-fill: green;");
