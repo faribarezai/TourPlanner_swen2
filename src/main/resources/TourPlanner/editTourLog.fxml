@@ -23,7 +23,7 @@
     </HBox>
 
     <HBox spacing="10">
-        <Label text="Duration:"/>
+        <Label text="Duration in min:"/>
         <Spinner fx:id="durationSpinner" HBox.hgrow="ALWAYS">
             <valueFactory>
                 <SpinnerValueFactory.IntegerSpinnerValueFactory min="1" max="1440" initialValue="1"/>
@@ -32,7 +32,7 @@
     </HBox>
 
     <HBox spacing="10">
-        <Label text="Distance:"/>
+        <Label text="Distance in km:"/>
         <Spinner fx:id="distanceSpinner" HBox.hgrow="ALWAYS">
             <valueFactory>
                 <SpinnerValueFactory.DoubleSpinnerValueFactory min="0.1" max="100.0" initialValue="1.0" amountToStepBy="0.1"/>

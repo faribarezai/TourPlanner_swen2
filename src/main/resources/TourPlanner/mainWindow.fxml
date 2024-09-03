@@ -99,12 +99,12 @@
                 <TableView fx:id="tourLogTableView" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS">
                     <columns>
                         <TableColumn fx:id="tourLogDate" text="Date" />
-                        <TableColumn fx:id="tourLogDuration" text="Duration" />
-                        <TableColumn fx:id="tourLogDistance" text="Distance" />
+                        <TableColumn fx:id="tourLogDuration" text="Duration in min" />
+                        <TableColumn fx:id="tourLogDistance" text="Distance in km" />
                         <TableColumn fx:id="tourLogDifficulty" text="Difficulty" />
                         <TableColumn fx:id="tourLogRating" text="Rating" />
                         <TableColumn fx:id="tourLogComment" text="Comment" />
-                        <TableColumn fx:id="tourLogTourID" text="Tour ID" />
+                       <!-- <TableColumn fx:id="tourLogTourID" text="Tour ID" /> -->
                     </columns>
                 </TableView>
             </VBox>
