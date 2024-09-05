@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.hibernate.internal.util.collections.ArrayHelper.forEach;
 
 @Component
 public class MainController {
@@ -112,7 +111,6 @@ public class MainController {
 
 
 
-
     @Autowired
     public MainController(ApplicationContext springContext, TourViewModel tourViewModel, TourService tourService, TourLogViewModel tourLogViewModel, TourLogService tourLogService) {
         this.springContext = springContext;
@@ -120,6 +118,7 @@ public class MainController {
         this.tourService = tourService;
         this.tourLogViewModel = tourLogViewModel;
         this.tourLogService = tourLogService;
+
     }
 
 
@@ -193,8 +192,8 @@ public class MainController {
                     }
                 } );
 
-                System.out.println("-----------------------------TEST_TEST_TEST_TEST_TEST_TEST_TEST_TEST_TEST_TEST_TEST_TEST_TEST-----------------------");
-                System.out.println("TourId: " + tourIdComboBox);
+               // System.out.println("-----------------------------TEST_TEST_TEST_TEST_TEST_TEST_TEST_TEST_TEST_TEST_TEST_TEST_TEST-----------------------");
+               // System.out.println("TourId: " + tourIdComboBox);
 
         }
 
@@ -461,11 +460,7 @@ public class MainController {
             // Remove the TourLog from the ViewModel
             tourLogViewModel.removeTourLog(selectedTourLog.getTourlogID());
         }
-
-       // long selectedTourLog = tourLogViewModel.selectedTourLogIdProperty().get();
-       // if (selectedTourLog >= 0) {
-         //   tourLogViewModel.removeTourLog(selectedTourLog);
-       // }
+        
     }
 
     public void handleEditTourLog() throws IOException {

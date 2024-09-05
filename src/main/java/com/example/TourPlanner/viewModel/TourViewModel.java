@@ -10,9 +10,10 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+
 
 
 @Component
@@ -28,7 +29,6 @@ public class TourViewModel {
     @Autowired
     public TourViewModel(TourService tourService) {
         this.tourService = tourService;
-        //this.tours= FXCollections.observableArrayList();
 
        try {
             loadTours();
@@ -41,19 +41,7 @@ public class TourViewModel {
 
     public void loadTours() {
         tours.setAll(tourService.getAllTours());
-        /*
-        List<Tour> list = tourService.getAllTours();
-       // tours.setAll(tourList.stream().map(Tour::getName).collect(Collectors.toList()));
-       logger.info("Beginning of loadTours Method in TourViewModel!!");
 
-        try {
-            for (Tour tour : list) {
-                tours.add(tour.getName());
-            }
-        } catch (Exception e) {
-            logger.error("Exception occurred while loading tours from service", e);
-            throw e; // Ensure exceptions are not swallowed
-        }*/
     }
 
 
@@ -68,7 +56,7 @@ public class TourViewModel {
             if (tour != null) {
                 tourService.deleteTourById(tour.getTourID());
                 logger.info("Tour deleted successfully!");
-                tours.remove(name);
+                tours.remove(tour); // before it was name and underlined yellow
             }
         } catch (Exception e) {
             logger.error("Exception occurred while removing tour", e);
@@ -86,4 +74,6 @@ public class TourViewModel {
         loadTours();
 
     }
+
+
 }

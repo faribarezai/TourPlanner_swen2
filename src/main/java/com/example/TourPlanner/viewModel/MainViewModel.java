@@ -26,12 +26,5 @@ public class MainViewModel {
     public StringProperty searchQueryProperty() {
         return searchQuery;
     }
-/*
-    public void addTour(Tour tour) {
-        tourService.addTour(tour);
-        tours.add(tour);
-    }
-    */
 
-    // Other ViewModel logic
 }
