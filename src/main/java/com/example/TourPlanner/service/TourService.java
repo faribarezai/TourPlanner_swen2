@@ -17,8 +17,14 @@ import static org.hibernate.internal.CoreLogging.logger;
 @Service
 public class TourService {
    private static final Logger logger = Logger.getLogger(TourViewModel.class.getName());
-   @Autowired
+    @Autowired
    private TourRepository tourRepository;
+
+    public TourService() {}
+
+    public TourService(TourRepository tourRepository) {
+        this.tourRepository = tourRepository;
+    }
 
    public List<Tour> getAllTours() {
       List<Tour> list= tourRepository.findAll();

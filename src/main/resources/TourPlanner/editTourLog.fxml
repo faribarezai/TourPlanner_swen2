@@ -15,7 +15,7 @@
         <Insets top="10" right="10" bottom="10" left="10"/>
     </padding>
 
-    <Label text="Add New Tour Log" styleClass="header"/>
+    <Label text="Edit Tour Log" styleClass="header"/>
 
     <HBox spacing="10">
         <Label text="Date:"/>

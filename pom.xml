@@ -90,7 +90,25 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-    </dependencies>
+
+
+			<!-- TestFX -->
+			<dependency>
+				<groupId>org.testfx</groupId>
+				<artifactId>testfx-core</artifactId>
+				<version>4.0.16-alpha</version> <!-- Check for the latest version -->
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.testfx</groupId>
+				<artifactId>testfx-junit5</artifactId>
+				<version>4.0.16-alpha</version> <!-- Check for the latest version -->
+				<scope>test</scope>
+			</dependency>
+
+
+
+	</dependencies>
 
 	<build>
 		<plugins>

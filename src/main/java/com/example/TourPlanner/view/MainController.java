@@ -6,7 +6,6 @@ import com.example.TourPlanner.service.TourLogService;
 import com.example.TourPlanner.service.TourService;
 import com.example.TourPlanner.viewModel.TourLogViewModel;
 import com.example.TourPlanner.viewModel.TourViewModel;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -207,6 +206,7 @@ public class MainController {
             tourIdComboBox.getItems().clear();
 
             // Fetch the list of tours from the TourViewModel
+            tourViewModel.loadTours();
             List<Tour> tours = tourViewModel.getTours();
 
             // Add tour names to the ComboBox
@@ -219,11 +219,10 @@ public class MainController {
             }
 
             // Optionally, set a prompt text if the ComboBox is empty
-            if (tourIdComboBox.getItems().isEmpty()) {
+            if (tourIdComboBox.getItems().isEmpty())
                 tourIdComboBox.setPromptText("No tours available");
-            } else {
-                tourIdComboBox.setPromptText("");  // Clear the prompt text if items are available
-            }
+
+            logger.info("ComboBOx updated successfully!");
         }
     }
 
@@ -369,7 +368,6 @@ public class MainController {
     // when clicking on a TourLog, its corresponding Tourdetail shall display
     private void displayTourDetails(TourLog selectedTourlog) {
         Long tourId = selectedTourlog.getTourId();
-
         //fetch tour details throught the ID
         Tour tourDetails = tourService.getTourById(tourId);
 
@@ -398,7 +396,7 @@ public class MainController {
     public void handleSaveTourLog() {
         // Retrieve the selected date from DatePicker
         LocalDate logDate = datePicker.getValue();
-        logger.info("Where is my Date? : " + logDate);
+       // logger.info("Where is my Date? : " + logDate);
 
         String comment = commentField.getText();
         String difficulty = difficultyComboBox.getValue();
@@ -406,7 +404,7 @@ public class MainController {
         Double distance = distanceSpinner.getValue();
         String rating = ratingComboBox.getValue();
         Long tourID = tourIdComboBox.getValue();
-        logger.info("selectedTourId: " + tourID);
+       // logger.info("selectedTourId: " + tourID);
 
         // Check if all required fields are filled out
         if (logDate == null || comment.isEmpty() || difficulty == null || duration == null || distance == null || rating == null) {

@@ -22,7 +22,8 @@ public class TourLogViewModel {
     private final TourLogService tourLogService;
     @Getter
     private ObservableList<TourLog> tourLogs = FXCollections.observableArrayList();
-    private final LongProperty selectedTourLogId = new SimpleLongProperty();
+    @Getter
+    private final LongProperty selectedTourLogId = new SimpleLongProperty(1L);
 
     @Autowired
     public TourLogViewModel(TourLogService tourLogService) {
