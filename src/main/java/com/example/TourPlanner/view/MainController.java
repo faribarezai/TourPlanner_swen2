@@ -1,18 +1,25 @@
 package com.example.TourPlanner.view;
 
+import com.example.TourPlanner.Main;
 import com.example.TourPlanner.model.Tour;
 import com.example.TourPlanner.model.TourLog;
 import com.example.TourPlanner.service.TourLogService;
 import com.example.TourPlanner.service.TourService;
 import com.example.TourPlanner.viewModel.TourLogViewModel;
 import com.example.TourPlanner.viewModel.TourViewModel;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
@@ -23,6 +30,7 @@ import org.springframework.stereotype.Component;
 import javafx.scene.image.ImageView;
 
 import java.io.IOException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -38,7 +46,14 @@ public class MainController {
     private final TourLogService tourLogService;
     public VBox tourDetailsContainer;
     public VBox tourDetailsInclude;
-   // public TableColumn tourLogTourID;
+
+
+    @FXML
+    private WebView mapWebView;
+
+    @FXML
+    private TextField searchTextField;
+    private ObservableList<Tour> tourList= FXCollections.observableArrayList();
 
     @FXML
     private ListView<Tour> tourListView;
@@ -52,8 +67,7 @@ public class MainController {
     private TextField tourFromField;
     @FXML
     private TextField tourToField;
-    @FXML
-    private VBox tourListViewContainer;
+
     @FXML
     private Label tourIdLabel;
     @FXML
@@ -110,6 +124,7 @@ public class MainController {
 
 
 
+
     @Autowired
     public MainController(ApplicationContext springContext, TourViewModel tourViewModel, TourService tourService, TourLogViewModel tourLogViewModel, TourLogService tourLogService) {
         this.springContext = springContext;
@@ -120,12 +135,42 @@ public class MainController {
 
     }
 
-
+    public void showBrowser(ActionEvent actionEvent) {
+        Main.showMapInDefaultBrowser();
+    }
 
     @FXML
     public void initialize() {
+        // MAPview
+        mapWebView= new WebView();
 
-            if (tourViewModel != null) {
+        // Load the Leaflet HTML content
+        URL resourceUrl = getClass().getResource("/leaflet/leaflet.html");
+        System.out.println("Leaflet file stored here: " + resourceUrl);
+
+        WebEngine webEngine = mapWebView.getEngine();
+
+        if (resourceUrl != null) {
+            webEngine.load(resourceUrl.toExternalForm());
+            logger.info("show Loaded leaflet file.");
+        } else {
+            throw new IllegalStateException("Could not find leaflet.html in resources.");
+        }
+
+
+        //searchbar
+        // load tours from DB
+        tourList.addAll(tourViewModel.getTours());
+
+        // Add a listener to the searchTextField to update the filter
+        searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            tourListView.setItems(filterTour(newValue));
+        });
+
+
+
+        //tourListView
+        if (tourViewModel != null) {
                 // Initialize the ListView for Tours
                 tourListView.setItems(tourViewModel.getTours());
                 tourListView.setCellFactory(lv -> new ListCell<Tour>() {
@@ -198,6 +243,17 @@ public class MainController {
 
 
 
+
+    private ObservableList<Tour> filterTour(String searchtext) {
+        ObservableList<Tour> filteredTours= FXCollections.observableArrayList();
+        tourListView.getItems().clear();
+        for(Tour tour: tourList){
+            if(tour.getName().toLowerCase().contains(searchtext.toLowerCase())) {
+                filteredTours.add(tour);
+            }
+        }
+        return filteredTours;
+    }
 
 
     private void updateTourIdComboBox() {
