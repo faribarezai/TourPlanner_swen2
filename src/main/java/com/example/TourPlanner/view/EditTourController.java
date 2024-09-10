@@ -50,6 +50,17 @@ public class EditTourController {
 
     private Tour tour;
 
+    public void setTourToEdit(Tour tourToEdit) {
+        this.tour= tourToEdit;
+        // Populate the fields with the details of the selected tour
+        tourNameField.setText(tour.getName());
+        tourDescriptionField.setText(tour.getDescription());
+        tourFromField.setText(tour.getTourFrom());
+        tourToField.setText(tour.getTourTo());
+        transportTypeComboBox.setValue(tour.getTransportType());
+
+    }
+
     public void handleUpdateTour() {
         String tourName = tourNameField.getText();
         String tourDescription = tourDescriptionField.getText();
@@ -68,6 +79,9 @@ public class EditTourController {
         // when no texField is empty, add Tour to DB via tour service
         tourService.updateTour(tour);
 
+        //update the tour in the viewModel
+        tourViewModel.updateTour(tour);
+
         // tour successfully added
         successLabel.setText("Tour updated successfully!");
         Stage stage = (Stage) tourNameField.getScene().getWindow();
@@ -75,17 +89,6 @@ public class EditTourController {
 
     }
 
-
-    public void setTourToEdit(Tour tourToEdit) {
-        this.tour= tourToEdit;
-        // Populate the fields with the details of the selected tour
-        tourNameField.setText(tour.getName());
-        tourDescriptionField.setText(tour.getDescription());
-        tourFromField.setText(tour.getTourFrom());
-        tourToField.setText(tour.getTourTo());
-        transportTypeComboBox.setValue(tour.getTransportType());
-
-    }
 
     @FXML
     private void handleCancel() {
@@ -95,7 +98,7 @@ public class EditTourController {
         tourDescriptionField.clear();
         tourFromField.clear();
         tourToField.clear();
-        transportTypeComboBox.setValue("Bike");
+        transportTypeComboBox.setValue("");
         successLabel.setText("");
 
         Stage stage = (Stage) tourNameField.getScene().getWindow();

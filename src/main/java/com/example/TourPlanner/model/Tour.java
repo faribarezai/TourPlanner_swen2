@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,9 +43,9 @@ public class Tour {
     @Column
     private String transportType;
     @Column
-    private Integer tourDistance;
+    private Double tourDistance;
     @Column
-    private Integer estimatedTime;
+    private Time estimatedTime;
     @Column
     private String routeInfos;// image with tour-map
 
@@ -57,13 +58,31 @@ public class Tour {
         this.tourFrom= from;
         this.tourTo= to;
         this.transportType = transportType;
+        this.routeInfos= getRouteInfos();
+        this.estimatedTime =getEstimatedTime();
+        this.tourDistance= getTourDistance();
 
     }
     public Tour(String name) {
         this.name= name;
     }
 
-    public Tour() {
+    public Tour() {}
 
+
+    public void addTourLog(TourLog log) {
+        tourLogs.add(log);
+        log.setTour(this);
     }
+
+    public void removeTourLog(TourLog log) {
+        tourLogs.remove(log);
+        log.setTour(null);
+    }
+
+    @Override
+    public String toString() {
+        return name;
+        }
+
 }

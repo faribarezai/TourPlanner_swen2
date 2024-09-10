@@ -1,6 +1,7 @@
 module com.example.TourPlanner {
     requires javafx.fxml;
     requires javafx.controls;
+    requires javafx.web;
     requires spring.web;
     requires spring.beans;
     requires spring.context;

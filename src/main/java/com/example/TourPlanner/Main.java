@@ -9,7 +9,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+import java.util.Objects;
 
 @SpringBootApplication
 @Configuration(proxyBeanMethods = false)
@@ -20,22 +21,25 @@ public class Main extends Application {
     @Override
     public void init() {
         springContext = new SpringApplicationBuilder(Main.class).headless(false).run();
+
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/TourPlanner/mainWindow.fxml"));
 
-       // FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/resource/TourPlanner/mainWindow.fxml"));
-        fxmlLoader.setControllerFactory(springContext::getBean); // Use Spring to manage controllers
+        // Use Spring to manage controllers
+        fxmlLoader.setControllerFactory(springContext::getBean);
         Scene scene = new Scene(fxmlLoader.load());
         // Add CSS file to scene
-        scene.getStylesheets().add((getClass().getResource("/TourPlanner/styles.css")).toExternalForm());
+        scene.getStylesheets().add((Objects.requireNonNull(getClass().getResource("/TourPlanner/styles.css"))).toExternalForm());
+
 
         primaryStage.setScene(scene);
         primaryStage.setTitle("Tour Planner");
         primaryStage.show();
     }
+
 
     public static void main(String[] args) {
         launch(args);

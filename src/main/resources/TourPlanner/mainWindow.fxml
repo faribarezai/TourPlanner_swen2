@@ -1,133 +1,69 @@
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ListView?>
-<?import java.lang.String?>
-<?import javafx.collections.FXCollections?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.WebView?>
 
 <GridPane xmlns:fx="http://javafx.com/fxml/1"
-          alignment="center"
-          gridLinesVisible="false"
-          hgap="5" vgap="5.0"
-          minHeight="400.0" minWidth="800.0"
+          alignment="top_left"
+          hgap="10" vgap="10"
+          minHeight="600.0" minWidth="900.0"
           xmlns="http://javafx.com/javafx/11.0.2"
           fx:controller="com.example.TourPlanner.view.MainController">
 
-    <!-- Bottom empty space -->
-    <Region GridPane.columnIndex="0" GridPane.rowIndex="4" prefHeight="50" GridPane.columnSpan="3"/>
-
-    <!-- Search -->
-    <HBox spacing="10" HBox.hgrow="ALWAYS" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
+    <!-- Search Bar -->
+    <HBox spacing="10" HBox.hgrow="ALWAYS" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="3">
         <Label text="Search:"/>
-        <TextField fx:id="searchTextField" HBox.hgrow="ALWAYS"/>
+        <TextField fx:id="searchTextField" promptText="Search for a tour..." HBox.hgrow="ALWAYS"/>
     </HBox>
-    <Region GridPane.columnIndex="0" GridPane.rowIndex="0" prefHeight="50"/>
 
-    <!-- Tours and General -->
-    <HBox spacing="10" HBox.hgrow="ALWAYS" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2">
-        <!-- Left empty space -->
-        <Region GridPane.columnIndex="0" GridPane.rowIndex="2" prefWidth="50"/>
 
-        <!-- Tours -->
-        <VBox spacing="10" HBox.hgrow="ALWAYS">
+
+    <!-- Tours Section -->
+    <VBox spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.rowSpan="2">
+        <HBox spacing="10">
+            <Label text="Tours" styleClass="label-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <!-- Buttons for Tours -->
             <HBox spacing="10">
-                <Label text="Tours" />
-                <!-- Empty Spaces -->
-                <HBox HBox.hgrow="ALWAYS"/>
-                <HBox HBox.hgrow="ALWAYS"/>
-                <!-- Buttons for Tours -->
-                <HBox spacing="10">
-                    <Button fx:id="addTour" text="+" onAction="#handleAddTour" />
-                    <Button fx:id ="removeTour" text="-" onAction="#handleRemoveTour"/>
-                    <Button fx:id="editTour" text="..." onAction="#handleEditTour"/>
-                </HBox>
+                <Button fx:id="addTour" text="+" onAction="#handleAddTour" />
+                <Button fx:id="removeTour" text="-" onAction="#handleRemoveTour"/>
+                <Button fx:id="editTour" text="edit" onAction="#handleEditTour"/>
             </HBox>
+        </HBox>
 
-            <!-- List of Tours -->
-            <VBox GridPane.columnIndex="0" spacing="10" GridPane.rowIndex="0">
-                <ListView fx:id="tourListView" VBox.vgrow="ALWAYS" prefWidth="300"/>
-            </VBox>
 
-            <!-- Tour Details -->
-            <VBox fx:id="tourDetailsContainer" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                <fx:include fx:id="tourDetailsInclude" source="tourDetails.fxml"/>
-            </VBox>
+        <!-- List of Tours -->
+        <ListView fx:id="tourListView" VBox.vgrow="ALWAYS" prefHeight="150" prefWidth="200"/>
 
-        </VBox>
+        <!-- Tour Details -->
+        <fx:include fx:id="tourDetailsInclude" source="tourDetails.fxml"/>
+    </VBox>
 
-        <!-- General -->
-        <VBox spacing="10" HBox.hgrow="ALWAYS">
-            <HBox spacing="20">
-                <Button text="General" />
-                <Button text="Route" />
-                <Button text="Misc" />
-            </HBox>
 
-            <!-- Map placeholder -->
-            <ListView fx:id="mapPlaceholder" prefWidth="300">
-                <items>
-                    <FXCollections fx:factory="observableArrayList">
-                        <String fx:value="Map not available"/>
-                    </FXCollections>
-                </items>
-            </ListView>
 
-            <!-- TourLogs Header-->
-            <VBox spacing="10">
-                <HBox spacing="10">
-                    <Label text="Tour Logs" />
-                    <HBox HBox.hgrow="ALWAYS"/>
-                    <HBox HBox.hgrow="ALWAYS"/>
-                    <HBox spacing="10">
-                        <Button fx:id="addTourLog" text="+" onAction="#handleAddTourLog" />
-                        <Button fx:id ="removeTourLog" text="-" onAction="#handleRemoveTourLog"/>
-                        <Button fx:id="editTourLog" text="..." onAction="#handleEditTourLog"/>
-                    </HBox>
-                </HBox>
+    <!-- Map Section -->
+    <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+        <fx:include fx:id="mapView" source="map.fxml"/>
+    </VBox>
 
-                <!-- Table of TourLogs -->
-                <TableView fx:id="tourLogTableView" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS">
-                    <columns>
-                        <TableColumn fx:id="tourLogDate" text="Date" />
-                        <TableColumn fx:id="tourLogDuration" text="Duration" />
-                        <TableColumn fx:id="tourLogDistance" text="Distance" />
-                        <TableColumn fx:id="tourLogDifficulty" text="Difficulty" />
-                        <TableColumn fx:id="tourLogRating" text="Rating" />
-                        <TableColumn fx:id="tourLogComment" text="Comment" />
-                        <TableColumn fx:id="tourLogTourID" text="Tour ID" />
-                    </columns>
-                </TableView>
-            </VBox>
-        </VBox>
-    </HBox>
 
-    <!-- Bottom empty space -->
-    <Region GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="3" prefHeight="100"/>
 
-    <!-- Column constraints -->
+    <!-- TourLogs Section -->
+    <VBox GridPane.columnIndex="1" GridPane.rowIndex="2">
+        <fx:include fx:id="tourLogsInclude" source="tourlog.fxml"/>
+    </VBox>
+
+
+
+    <!-- Column constraints for equal resizing -->
     <columnConstraints>
-        <ColumnConstraints hgrow="ALWAYS" minWidth="200"/>
-        <ColumnConstraints hgrow="ALWAYS" minWidth="200"/>
-       <!-- <ColumnConstraints hgrow="ALWAYS" minWidth="200"/> -->
+        <ColumnConstraints hgrow="ALWAYS" minWidth="250"/>
+        <ColumnConstraints hgrow="ALWAYS" minWidth="300"/>
     </columnConstraints>
 
     <!-- Row constraints -->
     <rowConstraints>
-        <RowConstraints vgrow="ALWAYS"/> <!-- Top row (ListView) -->
-        <!-- <RowConstraints vgrow="ALWAYS"/> Middle row (ListView) -->
-        <!--   <RowConstraints vgrow="ALWAYS"/> Bottom row (ListView) -->
+        <RowConstraints vgrow="ALWAYS"/>
+        <RowConstraints vgrow="ALWAYS"/>
     </rowConstraints>
 
-    <!-- Right empty space -->
-    <Region GridPane.columnIndex="2" GridPane.rowIndex="0" prefWidth="100"/>
 </GridPane>

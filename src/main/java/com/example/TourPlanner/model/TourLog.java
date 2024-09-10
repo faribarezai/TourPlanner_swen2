@@ -23,7 +23,7 @@ public class TourLog {
     @Column
     private String comment;
     @Column
-    private String difficulty; //1...easy to 5...very difficult
+    private String difficulty; //easy to extreme
     @Column
     private Integer duration; // in minutes
     @Column
@@ -34,6 +34,15 @@ public class TourLog {
     @ManyToOne
     @JoinColumn(name = "tour_id", nullable = false)
     private Tour tour;
+
+    public Long getTourId() {
+        return tour != null ? tour.getTourID() : null;
+    }
+    public void setTourId(long id) {
+        tour = new Tour();
+        tour.setTourID(id);
+    }
+
 
     public TourLog(LocalDate date, String comment, String difficulty, Integer duration, Double distance, String rating) {
         this.date = date;

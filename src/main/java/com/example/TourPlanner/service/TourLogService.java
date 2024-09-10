@@ -41,13 +41,17 @@ public class TourLogService {
         Optional<TourLog> optionalExistingTourLog = tourLogRepository.findById(updatedTourLog.getTourlogID());
         if (optionalExistingTourLog.isPresent()) {
             TourLog existingTourLog = optionalExistingTourLog.get();
+            logger.log(Level.WARNING, "TourLog with ID exists" + existingTourLog.getTourlogID());
+
             existingTourLog.setDate(updatedTourLog.getDate());
             existingTourLog.setDistance(updatedTourLog.getDistance());
             existingTourLog.setComment(updatedTourLog.getComment());
             existingTourLog.setDifficulty(updatedTourLog.getDifficulty());
             existingTourLog.setDuration(updatedTourLog.getDuration());
             existingTourLog.setRating(updatedTourLog.getRating());
-            existingTourLog.setTour(updatedTourLog.getTour());
+
+            //existingTourLog.setTour(updatedTourLog.getTourId());
+            existingTourLog.setTourId(updatedTourLog.getTourId());
 
             // Set other properties as needed
             tourLogRepository.save(existingTourLog);

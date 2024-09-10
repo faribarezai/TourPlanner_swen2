@@ -6,6 +6,7 @@ import com.example.TourPlanner.viewModel.TourViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -16,8 +17,14 @@ import static org.hibernate.internal.CoreLogging.logger;
 @Service
 public class TourService {
    private static final Logger logger = Logger.getLogger(TourViewModel.class.getName());
-   @Autowired
+    @Autowired
    private TourRepository tourRepository;
+
+    public TourService() {}
+
+    public TourService(TourRepository tourRepository) {
+        this.tourRepository = tourRepository;
+    }
 
    public List<Tour> getAllTours() {
       List<Tour> list= tourRepository.findAll();
@@ -62,4 +69,13 @@ public class TourService {
     }
 
 
+    public List<Long> getAllTourIds() {
+       List<Tour> allTours = getAllTours();
+        List<Long> allIDs = new ArrayList<>();
+
+        for(Tour t :allTours) {
+            allIDs.add(t.getTourID());
+       }
+      return allIDs;
+    }
 }

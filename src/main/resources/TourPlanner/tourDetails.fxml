@@ -25,8 +25,8 @@
     <Label fx:id="tourEstimatedTimeLabel" styleClass="label-details"/>
     <Label fx:id="tourDistanceLabel" styleClass="label-details"/>
 
-    <Label text="Route Info:" styleClass="label-details"/>
-    <ImageView fx:id="routeImageView" fitWidth="400" fitHeight="200"/>
+    <Label fx:id="routeInfoLabel" styleClass="label-details"/>
+    <ImageView fx:id="routeImageView" fitWidth="200" fitHeight="150"/>
 
     </VBox>
 
