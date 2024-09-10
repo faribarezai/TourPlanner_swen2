@@ -2,13 +2,12 @@ package com.example.TourPlanner.view;
 
 import com.example.TourPlanner.model.Tour;
 import com.example.TourPlanner.model.TourLog;
-import com.example.TourPlanner.service.TourLogService;
 import com.example.TourPlanner.service.TourService;
-import com.example.TourPlanner.viewModel.TourLogViewModel;
 import com.example.TourPlanner.viewModel.TourViewModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -25,7 +24,7 @@ import org.springframework.stereotype.Component;
 import javafx.scene.image.ImageView;
 
 import java.io.IOException;
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -108,14 +107,21 @@ public class MainController {
 
         //searchbar
         // load tours from DB
-        tourList.addAll(tourViewModel.getTours());
+       /* tourList.addAll(tourViewModel.getTours());
 
         // Add a listener to the searchTextField to update the filter
-        searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            tourListView.setItems(filterTour(newValue));
+        searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {;
+            tourListView.getItems().clear();
+            if(tourListView != null) {
+                if (tourListView.equals(newValue))
+                    filterTour(newValue);
+            }
+            else{
+                tourListView.setItems(filterTour(newValue));
+            }
         });
 
-
+        */
 
         //tourListView
         if (tourViewModel != null) {
@@ -151,23 +157,44 @@ public class MainController {
                         }
                     }
                 });
+
             }
+
+
+        //Fulltext search
+        initializeSearchTextField();
 
         }
 
 
 
+    private void initializeSearchTextField() {
+        FilteredList<Tour> filteredList = new FilteredList<>(FXCollections.observableArrayList(tourListView.getItems()));
+        tourListView.setItems(filteredList);
 
-    private ObservableList<Tour> filterTour(String searchtext) {
-        ObservableList<Tour> filteredTours= FXCollections.observableArrayList();
-        tourListView.getItems().clear();
-        for(Tour tour: tourList){
-            if(tour.getName().toLowerCase().contains(searchtext.toLowerCase())) {
+        searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredList.setPredicate(tour -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String lowerCaseFilter = newValue.toLowerCase();
+                return tour.getName().toLowerCase().contains(lowerCaseFilter);
+            });
+        });
+    }
+
+
+    private List<Tour> filterTour(String searchText) {
+        List<Tour> filteredTours = new ArrayList<>();
+        for (Tour tour : tourList) {
+            if (tour.getName().toLowerCase().contains(searchText.toLowerCase()) ||
+                    tour.getDescription().toLowerCase().contains(searchText.toLowerCase())) {
                 filteredTours.add(tour);
             }
         }
         return filteredTours;
     }
+
 
 
     void updateTourIdComboBox() {
