@@ -1,6 +1,5 @@
 package com.example.TourPlanner.view;
 
-import com.example.TourPlanner.Main;
 import com.example.TourPlanner.model.Tour;
 import com.example.TourPlanner.model.TourLog;
 import com.example.TourPlanner.service.TourLogService;
@@ -10,16 +9,12 @@ import com.example.TourPlanner.viewModel.TourViewModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
@@ -30,7 +25,6 @@ import org.springframework.stereotype.Component;
 import javafx.scene.image.ImageView;
 
 import java.io.IOException;
-import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -42,18 +36,17 @@ public class MainController {
     private final ApplicationContext springContext;
     private final TourViewModel tourViewModel;
     private final TourService tourService;
-    private final TourLogViewModel tourLogViewModel;
-    private final TourLogService tourLogService;
-    public VBox tourDetailsContainer;
+    private final TourLogController tourLogController;
+
+
     public VBox tourDetailsInclude;
+    public AnchorPane mapView;
+    public AnchorPane tourLogsInclude;
 
-
-    @FXML
-    private WebView mapWebView;
 
     @FXML
     private TextField searchTextField;
-    private ObservableList<Tour> tourList= FXCollections.observableArrayList();
+    private final ObservableList<Tour> tourList= FXCollections.observableArrayList();
 
     @FXML
     private ListView<Tour> tourListView;
@@ -88,75 +81,25 @@ public class MainController {
     private Label routeInfoLabel;
     @FXML
     private ImageView routeImageView;
-    //TourLog
-    @FXML
-    private DatePicker datePicker;
-    @FXML
-    private ComboBox<String> difficultyComboBox;
-    @FXML
-    private TextField commentField;
-    @FXML
-    private Spinner<Integer> durationSpinner;
-    @FXML
-    private Spinner<Double> distanceSpinner;
-    @FXML
-    private ComboBox<String> ratingComboBox;
-    @FXML
-    private ComboBox<Long> tourIdComboBox;
     @FXML
     private Label successLabel;
     @FXML
+    private ComboBox<Long> tourIdComboBox;
+    @FXML
     private TableView<TourLog> tourLogTableView = new TableView<>();
-    @FXML
-    private TableColumn<TourLog, LocalDate> tourLogDate;
-    @FXML
-    private TableColumn<TourLog, Integer> tourLogDuration;
-    @FXML
-    private TableColumn<TourLog, Double> tourLogDistance;
-    @FXML
-    private TableColumn<TourLog, String> tourLogDifficulty;
-    @FXML
-    private TableColumn<TourLog, String> tourLogRating;
-    @FXML
-    private TableColumn<TourLog, String> tourLogComment;
-    @FXML
-    private TableColumn<TourLog, Long> tourLogTourId;
-
 
 
 
     @Autowired
-    public MainController(ApplicationContext springContext, TourViewModel tourViewModel, TourService tourService, TourLogViewModel tourLogViewModel, TourLogService tourLogService) {
+    public MainController(ApplicationContext springContext, TourViewModel tourViewModel, TourService tourService, TourLogController tourLogController) {
         this.springContext = springContext;
         this.tourViewModel = tourViewModel;
         this.tourService = tourService;
-        this.tourLogViewModel = tourLogViewModel;
-        this.tourLogService = tourLogService;
-
-    }
-
-    public void showBrowser(ActionEvent actionEvent) {
-        Main.showMapInDefaultBrowser();
+        this.tourLogController = tourLogController;
     }
 
     @FXML
     public void initialize() {
-        // MAPview
-        mapWebView= new WebView();
-
-        // Load the Leaflet HTML content
-        URL resourceUrl = getClass().getResource("/leaflet/leaflet.html");
-        System.out.println("Leaflet file stored here: " + resourceUrl);
-
-        WebEngine webEngine = mapWebView.getEngine();
-
-        if (resourceUrl != null) {
-            webEngine.load(resourceUrl.toExternalForm());
-            logger.info("show Loaded leaflet file.");
-        } else {
-            throw new IllegalStateException("Could not find leaflet.html in resources.");
-        }
-
 
         //searchbar
         // load tours from DB
@@ -173,7 +116,7 @@ public class MainController {
         if (tourViewModel != null) {
                 // Initialize the ListView for Tours
                 tourListView.setItems(tourViewModel.getTours());
-                tourListView.setCellFactory(lv -> new ListCell<Tour>() {
+                tourListView.setCellFactory(lv -> new ListCell<>() {
                     @Override
                     protected void updateItem(Tour item, boolean empty) {
                         super.updateItem(item, empty);
@@ -188,7 +131,7 @@ public class MainController {
                     }
                 });
 
-                // Handle double-clicks to display tour details
+                // Handle double-clicks to display tour details and its tourlogs in the tourLogTableView
                 tourListView.setOnMouseClicked(event -> {
                     if (event.getClickCount() == 2) {
                         displayTourDetails();
@@ -204,40 +147,6 @@ public class MainController {
                     }
                 });
             }
-
-                // Initial population of the ComboBox (for selecting a tourId )
-                updateTourIdComboBox();
-
-                // Initialize TableColumns
-                if (tourLogDate != null) tourLogDate.setCellValueFactory(new PropertyValueFactory<>("date")); //String "date" is from model
-                if (tourLogDuration != null) tourLogDuration.setCellValueFactory(new PropertyValueFactory<>("duration"));
-                if (tourLogDistance != null) tourLogDistance.setCellValueFactory(new PropertyValueFactory<>("distance"));
-                if (tourLogDifficulty != null) tourLogDifficulty.setCellValueFactory(new PropertyValueFactory<>("difficulty"));
-                if (tourLogRating != null) tourLogRating.setCellValueFactory(new PropertyValueFactory<>("rating"));
-                if (tourLogComment != null) tourLogComment.setCellValueFactory(new PropertyValueFactory<>("comment"));
-                if(tourLogTourId !=null) tourLogTourId.setCellValueFactory(new PropertyValueFactory<>("tour_id"));
-
-
-                // Set items for the TableView
-                if (tourLogViewModel != null) {
-                    tourLogTableView.setItems(tourLogViewModel.getTourLogs());
-
-                    // Handle double-clicks to display tour details
-                    tourLogTableView.setOnMouseClicked(event -> {
-                        if (event.getClickCount() == 2) {
-                            displayTourDetails();
-                        }
-                    });
-                }
-
-                tourLogTableView.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) ->{
-                    if (newValue != null) {
-                        displayTourDetails(newValue);
-                    }
-                } );
-
-               // System.out.println("-----------------------------TEST_TEST_TEST_TEST_TEST_TEST_TEST_TEST_TEST_TEST_TEST_TEST_TEST-----------------------");
-               // System.out.println("TourId: " + tourIdComboBox);
 
         }
 
@@ -256,7 +165,7 @@ public class MainController {
     }
 
 
-    private void updateTourIdComboBox() {
+    void updateTourIdComboBox() {
         if (tourViewModel != null && tourIdComboBox != null) {
             // Clear the existing items in the ComboBox
             tourIdComboBox.getItems().clear();
@@ -376,7 +285,8 @@ public class MainController {
         }
     }
 
-    private void displayTourDetails() {
+
+    void displayTourDetails() {
         String selectedTour = tourViewModel.selectedTourProperty().get();
         Tour tourDetails = tourViewModel.getTourDetails(selectedTour);
 
@@ -384,6 +294,7 @@ public class MainController {
             initData(tourDetails);
         }
     }
+
 
     public void initData(Tour tour) {
         if (tour == null) {
@@ -417,149 +328,4 @@ public class MainController {
         }
     }
 
-
-//-----------------------------------------------TOUR LOG------------------------------------------------------------------
-    //TourLOG
-
-    // when clicking on a TourLog, its corresponding Tourdetail shall display
-    private void displayTourDetails(TourLog selectedTourlog) {
-        Long tourId = selectedTourlog.getTourId();
-        //fetch tour details throught the ID
-        Tour tourDetails = tourService.getTourById(tourId);
-
-        if(tourDetails != null) {
-            initData(tourDetails);
-        }
-
-    }
-
-    // ADD into Tourlog
-    @FXML
-    public void handleAddTourLog() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/TourPlanner/addTourLog.fxml"));
-        fxmlLoader.setControllerFactory(springContext::getBean);
-        Scene scene = new Scene(fxmlLoader.load());
-
-        Stage stage = new Stage();
-        stage.setTitle("Add New TourLog");
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.setScene(scene);
-        stage.showAndWait();
-    }
-
-
-    @FXML
-    public void handleSaveTourLog() {
-        // Retrieve the selected date from DatePicker
-        LocalDate logDate = datePicker.getValue();
-       // logger.info("Where is my Date? : " + logDate);
-
-        String comment = commentField.getText();
-        String difficulty = difficultyComboBox.getValue();
-        Integer duration = durationSpinner.getValue();
-        Double distance = distanceSpinner.getValue();
-        String rating = ratingComboBox.getValue();
-        Long tourID = tourIdComboBox.getValue();
-       // logger.info("selectedTourId: " + tourID);
-
-        // Check if all required fields are filled out
-        if (logDate == null || comment.isEmpty() || difficulty == null || duration == null || distance == null || rating == null) {
-            successLabel.setText("All fields must be filled out!");
-            successLabel.setStyle("-fx-text-fill: red;");
-            return;
-        }
-
-        // Retrieve the Tour entity from the database by its ID
-        Tour selectedTour = tourService.getTourById(tourID);
-
-        if (selectedTour == null) {
-            successLabel.setText("Selected tour not found!");
-            successLabel.setStyle("-fx-text-fill: red;");
-            return;
-        }
-
-        // Create and persist the TourLog
-        TourLog tourLog = new TourLog(logDate, comment, difficulty, duration, distance, rating);
-        tourLog.setTour(selectedTour);
-
-         updateTourIdComboBox();
-        // Save the TourLog using the service
-        tourLogService.addTourLog(tourLog);
-
-        // Update the tour log in the ViewModel to reflect changes in the UI
-         tourLogViewModel.refreshTourLogs();
-
-        successLabel.setText("Tour log saved successfully!");
-        successLabel.setStyle("-fx-text-fill: green;");
-
-        // Reset all fields for adding a new TourLog
-        datePicker.setValue(null);
-        commentField.setText("");
-        difficultyComboBox.setValue(null);
-        durationSpinner.getValueFactory().setValue(1);
-        distanceSpinner.getValueFactory().setValue(0.1);
-        ratingComboBox.setValue(null);
-        tourIdComboBox.setValue(null);
-    }
-
-
-
-
-    public void handleRemoveTourLog() {
-        TourLog selectedTourLog = tourLogTableView.getSelectionModel().getSelectedItem();
-        if (selectedTourLog != null) {
-            // Remove the TourLog from the database
-            tourLogService.deleteTourLogById(selectedTourLog.getTourlogID());
-
-            // Remove the TourLog from the ViewModel
-            tourLogViewModel.removeTourLog(selectedTourLog.getTourlogID());
-        }
-        
-    }
-
-    public void handleEditTourLog() throws IOException {
-
-        TourLog selectedTourLog = tourLogTableView.getSelectionModel().getSelectedItem();
-        if (selectedTourLog != null) {
-            // Make your changes to the selectedTourLog here
-            TourLog tourLogToEdit = tourLogViewModel.getTourLogByID(selectedTourLog.getTourlogID());
-
-            if (tourLogToEdit != null) {
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/TourPlanner/editTourLog.fxml"));
-                fxmlLoader.setControllerFactory(springContext::getBean);
-
-                Scene scene = new Scene(fxmlLoader.load());
-                Stage stage = new Stage();
-                EditTourLogController editTourLogController = fxmlLoader.getController();
-                editTourLogController.setTourLogToEdit(tourLogToEdit);
-                stage.setTitle("Edit TourLog");
-                stage.initModality(Modality.WINDOW_MODAL);
-                stage.setScene(scene);
-                stage.showAndWait();
-            }
-
-
-            // Update the tour log in the ViewModel
-            tourLogViewModel.updateTourLog(selectedTourLog);
-        }
-    }
-
-
-
-    public void handleTourLogCancel() {
-        // Clear all input fields
-        datePicker.setValue(null);
-        commentField.clear();
-        difficultyComboBox.getSelectionModel().clearSelection();
-        durationSpinner.getValueFactory().setValue(0); // Reset to default value
-        distanceSpinner.getValueFactory().setValue(0.0); // Reset to default value
-        ratingComboBox.getSelectionModel().clearSelection();
-        tourIdComboBox.getSelectionModel().clearSelection();
-
-
-        successLabel.setText("");
-        Stage stage = (Stage) datePicker.getScene().getWindow();
-        stage.close();
-
-    }
 }

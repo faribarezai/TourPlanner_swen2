@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.TourPlanner.view.TourLogController"
+            AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+
+     <VBox spacing="10" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+
+            <HBox spacing="10">
+                  <Label text="Tour Logs" styleClass="label-title"/>
+                  <HBox HBox.hgrow="ALWAYS"/>
+                  <HBox HBox.hgrow="ALWAYS"/>
+                  <HBox spacing="10">
+                      <Button fx:id="addTourLog" text="+" onAction="#handleAddTourLog" />
+                      <Button fx:id ="removeTourLog" text="-" onAction="#handleRemoveTourLog"/>
+                      <Button fx:id="editTourLog" text="edit" onAction="#handleEditTourLog"/>
+                  </HBox>
+              </HBox>
+
+              <!-- Table of TourLogs -->
+              <TableView fx:id="tourLogTableView" VBox.vgrow="ALWAYS">
+                   <!--TableView fx:id="tourLogTableView" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS" prefHeight="300" prefWidth="300">
+               -->   <columns>
+                      <TableColumn fx:id="tourLogDate" text="Date" />
+                      <TableColumn fx:id="tourLogDuration" text="Duration in min" />
+                      <TableColumn fx:id="tourLogDistance" text="Distance in km" />
+                      <TableColumn fx:id="tourLogDifficulty" text="Difficulty" />
+                      <TableColumn fx:id="tourLogRating" text="Rating" />
+                      <TableColumn fx:id="tourLogComment" text="Comment" />
+                      <!-- <TableColumn fx:id="tourLogTourID" text="Tour ID" /> -->
+                  </columns>
+              </TableView>
+
+     </VBox>
+
+
+</AnchorPane>

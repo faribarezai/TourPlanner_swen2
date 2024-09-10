@@ -3,6 +3,7 @@
 <?import jakarta.persistence.criteria.Root?>
 <?import org.apache.logging.log4j.core.layout.PatternLayout?>
 <?import java.io.Console?>
+<!--
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration xmlns="http://logging.apache.org/log4j/2.0/config" status="WARN">
     <Appenders>
@@ -18,4 +19,4 @@
             <AppenderRef ref="Console"/>
         </Logger>
     </Loggers>
-</Configuration>
+</Configuration> -->

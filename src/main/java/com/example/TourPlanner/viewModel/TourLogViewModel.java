@@ -35,6 +35,7 @@ public class TourLogViewModel {
         try {
             List<TourLog> logs = tourLogService.getAllTourLogs();
             tourLogs.addAll(logs);
+            logger.info("TourLogs are loaded successfully!");
         } catch (Exception e) {
             logger.error("Error loading TourLogs", e);
             // Handle error
@@ -45,6 +46,7 @@ public class TourLogViewModel {
         if(tourLogs !=null) {
             tourLogs.clear();
             tourLogs.addAll(tourLogService.getAllTourLogs());
+            logger.info("TourLog was refreshed!");
         }
     }
 
@@ -76,6 +78,7 @@ public class TourLogViewModel {
 
     public void updateTourLog(TourLog updatedTourLog) {
         tourLogService.updateTourLog(updatedTourLog);
+        logger.info("TourLog updated successfully!");
     }
 
     public TourLog getTourLogByID(Long T_id) {

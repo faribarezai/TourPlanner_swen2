@@ -26,7 +26,7 @@
     <Label fx:id="tourDistanceLabel" styleClass="label-details"/>
 
     <Label fx:id="routeInfoLabel" styleClass="label-details"/>
-    <ImageView fx:id="routeImageView" fitWidth="400" fitHeight="200"/>
+    <ImageView fx:id="routeImageView" fitWidth="200" fitHeight="150"/>
 
     </VBox>
 
