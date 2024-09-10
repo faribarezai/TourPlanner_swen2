@@ -31,6 +31,7 @@ public class TourLog {
     @Column
     private String rating; // stars...
 
+    @Getter
     @ManyToOne
     @JoinColumn(name = "tour_id", nullable = false)
     private Tour tour;
@@ -38,9 +39,9 @@ public class TourLog {
     public Long getTourId() {
         return tour != null ? tour.getTourID() : null;
     }
+
     public void setTourId(long id) {
-        tour = new Tour();
-        tour.setTourID(id);
+       tour.setTourID(id);
     }
 
 
@@ -51,13 +52,7 @@ public class TourLog {
         this.duration = duration;
         this.distance = distance;
         this.rating = rating;
-        this.tour= getTour();
 
-    }
-
-    public Tour getTour() {
-       Tour tour = new Tour();
-        return tour;
     }
 
     public TourLog() {

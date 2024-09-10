@@ -36,7 +36,7 @@ public class MainController {
     private final ApplicationContext springContext;
     private final TourViewModel tourViewModel;
     private final TourService tourService;
-    private final TourLogController tourLogController;
+    private TourLogController tourLogController;
 
 
     public VBox tourDetailsInclude;
@@ -91,10 +91,15 @@ public class MainController {
 
 
     @Autowired
-    public MainController(ApplicationContext springContext, TourViewModel tourViewModel, TourService tourService, TourLogController tourLogController) {
+    public MainController(ApplicationContext springContext, TourViewModel tourViewModel, TourService tourService) {
         this.springContext = springContext;
         this.tourViewModel = tourViewModel;
         this.tourService = tourService;
+
+    }
+
+    @Autowired
+    public void setTourLogController(TourLogController tourLogController) {
         this.tourLogController = tourLogController;
     }
 

@@ -31,7 +31,7 @@ public class TourLogController {
     private final TourLogViewModel tourLogViewModel;
     private final TourLogService tourLogService;
     private final TourService tourService;
-    private final MainController mainController;
+    private MainController mainController;
 
         // TourLog
         @FXML
@@ -70,11 +70,16 @@ public class TourLogController {
         //...
 
     @Autowired
-    public TourLogController(ApplicationContext springContext, TourLogViewModel tourLogViewModel, TourLogService tourLogService, TourService tourService, MainController mainController) {
+    public TourLogController(ApplicationContext springContext, TourLogViewModel tourLogViewModel, TourLogService tourLogService, TourService tourService) {
         this.springContext = springContext;
         this.tourLogViewModel = tourLogViewModel;
         this.tourLogService = tourLogService;
         this.tourService = tourService;
+
+    }
+
+    @Autowired
+    public void setMainController(MainController mainController) {
         this.mainController = mainController;
     }
 
@@ -215,7 +220,6 @@ public class TourLogController {
         if (selectedTourLog != null) {
             // Make your changes to the selectedTourLog here
             TourLog tourLogToEdit = tourLogViewModel.getTourLogByID(selectedTourLog.getTourlogID());
-
 
 
             if (tourLogToEdit != null) {

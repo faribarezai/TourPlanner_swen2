@@ -13,6 +13,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Component
     public class EditTourLogController {
@@ -29,11 +30,6 @@ import java.time.LocalDate;
             this.tourLogService = tourLogService;
             this.tourService = tourService;
         }
-        @FXML
-        private TableView<TourLog> tourLogTableView = new TableView<>();
-
-        @FXML
-        private TextField searchTextField;
 
         @FXML
         private DatePicker datePicker;
@@ -43,8 +39,10 @@ import java.time.LocalDate;
         private TextField commentField;
         @FXML
         private Spinner<Integer> durationSpinner;
+
         @FXML
         private Spinner<Double> distanceSpinner;
+
         @FXML
         private ComboBox<String> ratingComboBox;
         @FXML
@@ -63,7 +61,9 @@ import java.time.LocalDate;
             distanceSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0, 100.0, tourLog.getDistance()));
 
             ratingComboBox.setValue(tourLog.getRating());
-            tourIdComboBox.setValue(tourLog.getTourId());
+
+            List<Long> tourIds = tourService.getAllTourIds();
+            tourIdComboBox.getItems().setAll(tourIds);
 
         }
 
@@ -78,6 +78,7 @@ import java.time.LocalDate;
         String rating = ratingComboBox.getValue();
         Long tourId = tourIdComboBox.getValue();
 
+
         // Update the tour log details
         tourLog.setDate(logDate);
         tourLog.setDifficulty(difficulty);
@@ -86,16 +87,31 @@ import java.time.LocalDate;
         tourLog.setDistance(distance);
         tourLog.setRating(rating);
 
-        // Assuming you have a method to retrieve the Tour by ID
+
+        // retrieve the Tour by ID
         Tour selectedTour = tourService.getTourById(tourId);
+        tourLog.setTourId(tourId);
+
+
         if (selectedTour != null) {
+
             tourLog.setTour(selectedTour);
+
+            // Update the tour log in the database via the service
+            tourLogService.updateTourLog(tourLog);
+
+            // Update the tour log in the ViewModel to reflect changes in the UI
+            tourLogViewModel.refreshTourLogs();
+
+            // Display success message
+            successLabel.setText("Tour log updated successfully!");
+
         } else {
-            // Handle case where tour is not found, if necessary
+            // tour is not found
             successLabel.setText("Selected tour not found!");
             return;
         }
-
+/*
         // Update the tour log in the database via the service
         tourLogService.updateTourLog(tourLog);
 
@@ -104,7 +120,7 @@ import java.time.LocalDate;
 
         // Display success message
         successLabel.setText("Tour log updated successfully!");
-
+*/
         // Close the window
         Stage stage = (Stage) datePicker.getScene().getWindow();
         stage.close();
