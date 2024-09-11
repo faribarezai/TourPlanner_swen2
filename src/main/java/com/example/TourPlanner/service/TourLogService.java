@@ -68,4 +68,13 @@ public class TourLogService {
             logger.log(Level.WARNING, "TourLog with ID " + updatedTourLog.getTourlogID() + " not found.");
         }
     }
+
+
+    public List<TourLog> getTourLogsByTourId(Long tourId) {
+        System.out.println("All Tourolgs of tour: "+tourId +" :->> " + getAllTourLogs().toString());
+        return tourLogRepository.findByTourId(tourId);
+
+
+    }
+
 }

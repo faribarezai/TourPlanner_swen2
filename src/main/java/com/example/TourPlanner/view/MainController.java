@@ -2,8 +2,10 @@ package com.example.TourPlanner.view;
 
 import com.example.TourPlanner.model.Tour;
 import com.example.TourPlanner.model.TourLog;
+import com.example.TourPlanner.service.TourLogService;
 import com.example.TourPlanner.service.TourService;
 import com.example.TourPlanner.viewModel.TourViewModel;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -18,15 +20,17 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import javafx.scene.image.ImageView;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-
 
 @Component
 public class MainController {
@@ -37,10 +41,10 @@ public class MainController {
     private final TourService tourService;
     private TourLogController tourLogController;
 
-
     public VBox tourDetailsInclude;
     public AnchorPane mapView;
     public AnchorPane tourLogsInclude;
+    private TourLogService tourLogService;
 
 
     @FXML
@@ -82,10 +86,17 @@ public class MainController {
     private ImageView routeImageView;
     @FXML
     private Label successLabel;
+
+
     @FXML
     private ComboBox<Long> tourIdComboBox;
+
+
     @FXML
-    private TableView<TourLog> tourLogTableView = new TableView<>();
+    private Label popularityLabel;
+    @FXML
+    private Label childFriendlinessLabel;
+
 
 
 
@@ -103,25 +114,16 @@ public class MainController {
     }
 
     @FXML
-    public void initialize() {
-
-        //searchbar
-        // load tours from DB
-       /* tourList.addAll(tourViewModel.getTours());
-
-        // Add a listener to the searchTextField to update the filter
-        searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {;
-            tourListView.getItems().clear();
-            if(tourListView != null) {
-                if (tourListView.equals(newValue))
-                    filterTour(newValue);
-            }
-            else{
-                tourListView.setItems(filterTour(newValue));
+    private void handleTourSelection() {
+        tourListView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                displayTourDetails();
             }
         });
+    }
 
-        */
+    @FXML
+    public void initialize() {
 
         //tourListView
         if (tourViewModel != null) {
@@ -141,6 +143,9 @@ public class MainController {
                         tourViewModel.selectedTourProperty().set(newSelection.getName());
                     }
                 });
+
+                // TourSelection
+                handleTourSelection();
 
                 // Handle double-clicks to display tour details and its tourlogs in the tourLogTableView
                 tourListView.setOnMouseClicked(event -> {
@@ -164,7 +169,8 @@ public class MainController {
         //Fulltext search
         initializeSearchTextField();
 
-        }
+
+    }
 
 
 
@@ -184,16 +190,6 @@ public class MainController {
     }
 
 
-    private List<Tour> filterTour(String searchText) {
-        List<Tour> filteredTours = new ArrayList<>();
-        for (Tour tour : tourList) {
-            if (tour.getName().toLowerCase().contains(searchText.toLowerCase()) ||
-                    tour.getDescription().toLowerCase().contains(searchText.toLowerCase())) {
-                filteredTours.add(tour);
-            }
-        }
-        return filteredTours;
-    }
 
 
 
@@ -319,11 +315,27 @@ public class MainController {
 
 
     void displayTourDetails() {
-        String selectedTour = tourViewModel.selectedTourProperty().get();
-        Tour tourDetails = tourViewModel.getTourDetails(selectedTour);
+        Tour selectedTour = tourListView.getSelectionModel().getSelectedItem();
+       logger.info("Selected Tour: "+ selectedTour.getTourID());
+        logger.info("Selected Tour Name: "+ selectedTour.getName());
+long tourId= selectedTour.getTourID();
+
+        Tour tourDetails = tourViewModel.getTourDetails(selectedTour.getName());
 
         if (tourDetails != null) {
+            // Calculate and set computed attributes using the calculator
+            int popularity = calculatePopularity(tourId);
+            String childFriendliness = calculateChildFriendliness(tourId);
+
+            tourDetails.setPopularity(popularity);
+            tourDetails.setChildFriendliness(childFriendliness);
+
             initData(tourDetails);
+
+            // Fetch and display tour logs
+            Long tour_Id = tourDetails.getTourID();
+            List<TourLog> tourLogs = tourLogService.getTourLogsByTourId(tour_Id);
+            //tourLogTableView.getItems().setAll(tourLogs);
         }
     }
 
@@ -357,6 +369,217 @@ public class MainController {
         }
         else {
             routeInfoLabel.setText("Route Infos:  \t\tNot available");
+        }
+
+        // Compute and display popularity and child-friendliness
+        if (tour.getPopularity() != null) {
+            popularityLabel.setText("Popularity: \t\t" +calculatePopularity(tour.getTourID()));
+        } else {
+            popularityLabel.setText("Popularity: \t\tNot available");
+        }
+
+        if (tour.getChildFriendliness() != null) {
+            childFriendlinessLabel.setText("Child-Friendliness: \t" + calculateChildFriendliness(tour.getTourID()));
+        } else {
+            childFriendlinessLabel.setText("Child-Friendliness: \tNot available");
+        }
+
+
+
+    }
+
+
+    @Autowired
+    public void setTourLogService(TourLogService tourLogService) {
+        this.tourLogService = tourLogService;
+    }
+
+    @FXML
+    private void handleGenerateReport() {
+
+        logger.info("generate report Methode!!!");
+        String pdfFileName = "TourReport.pdf";
+/*
+        try (PdfWriter writer = new PdfWriter(pdfFileName);
+             PdfDocument pdfDoc = new PdfDocument(writer);
+             Document document = new Document(pdfDoc)) {
+
+            // Add a title to the document
+            document.add(new Paragraph("Tour Report")
+                    .setFontSize(18)
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setBold());
+
+            String selectedTourName = tourViewModel.selectedTourProperty().get();
+            Tour tour = tourViewModel.getTourDetails(selectedTourName);
+
+            if (tour != null) {
+                document.add(new Paragraph("Tour ID: " + tour.getTourID()));
+                document.add(new Paragraph("Name: " + tour.getName()));
+                document.add(new Paragraph("From: " + tour.getTourFrom()));
+                document.add(new Paragraph("To: " + tour.getTourTo()));
+                document.add(new Paragraph("Transport Type: " + tour.getTransportType()));
+                document.add(new Paragraph("Description: " + tour.getDescription()));
+                document.add(new Paragraph("Estimated Time: " + (tour.getEstimatedTime() != null ? tour.getEstimatedTime() : "Not available")));
+                document.add(new Paragraph("Tour Distance: " + (tour.getTourDistance() != null ? tour.getTourDistance() : "Not available")));
+                document.add(new Paragraph("Route Infos: " + (tour.getRouteInfos() != null ? tour.getRouteInfos() : "Not available")));
+
+                // Add a section for tour logs
+               // List<TourLog> tourLogs = tourLogService.getTourLogsByTourId(tour.getTourID());
+                if (tourLogs != null && !tourLogs.isEmpty()) {
+                    document.add(new Paragraph("Tour Logs:").setBold().setFontSize(16).setMarginTop(20));
+
+                    Table table = new Table(new float[]{1, 2, 2, 3, 2, 2}); // Define column widths
+                    table.addHeaderCell(new Cell().add(new Paragraph("Log ID")));
+                    table.addHeaderCell(new Cell().add(new Paragraph("Date")));
+                    table.addHeaderCell(new Cell().add(new Paragraph("Difficulty")));
+                    table.addHeaderCell(new Cell().add(new Paragraph("Comment")));
+                    table.addHeaderCell(new Cell().add(new Paragraph("Duration")));
+                    table.addHeaderCell(new Cell().add(new Paragraph("Distance")));
+
+                    for (TourLog log : tourLogs) {
+                        table.addCell(new Cell().add(new Paragraph(String.valueOf(log.getTourlogID()))));
+                        table.addCell(new Cell().add(new Paragraph(log.getDate().toString())));
+                        table.addCell(new Cell().add(new Paragraph(log.getDifficulty())));
+                        table.addCell(new Cell().add(new Paragraph(log.getComment())));
+                        table.addCell(new Cell().add(new Paragraph(String.valueOf(log.getDuration()))));
+                        table.addCell(new Cell().add(new Paragraph(String.valueOf(log.getDistance()))));
+                    }
+
+                    document.add(table);
+                } else {
+                    document.add(new Paragraph("No logs available for this tour."));
+                }
+*/
+        /*
+
+                successLabel.setText("PDF report generated successfully!");
+                successLabel.setStyle("-fx-text-fill: green;");
+            } else {
+                successLabel.setText("Selected tour not found.");
+                successLabel.setStyle("-fx-text-fill: red;");
+            }
+
+        } catch (IOException e) {
+            logger.error("Error generating PDF report", e);
+            successLabel.setText("Failed to generate PDF report.");
+            successLabel.setStyle("-fx-text-fill: red;");
+        }
+        */
+    }
+
+
+
+
+
+
+
+// computed attributes
+
+    public int calculatePopularity(Long tourId) {
+        List<TourLog> logs = tourLogService.getTourLogsByTourId(tourId);
+
+        logger.info("Log size i popularity: " + logs.size());
+        return logs.size(); // Number of logs indicates popularity
+    }
+
+
+
+    public String calculateChildFriendliness(Long tourId) {
+        List<TourLog> logs = tourLogService.getTourLogsByTourId(tourId);
+        if (logs.isEmpty()) return "Not available";
+
+        logger.info("child friendliness log size: " + logs.size());
+
+       // String totalDifficulty = "";
+        double totalDistance = 0.0;
+
+        for (TourLog log : logs) {
+           // totalDifficulty += log.getDifficulty();
+            totalDistance += log.getDistance();
+        }
+
+
+        // formula for child-friendliness
+        if (totalDistance <= 5) {
+            return "Very child-friendly";
+        } else if (totalDistance <= 10) {
+            return "Moderately child-friendly";
+        } else {
+            return "Less child-friendly";
+        }
+    }
+
+
+
+    // Export &  Import
+    @FXML
+    private void handleExportTours() {
+        List<Tour> tours = tourViewModel.getTours();
+        exportToursToFile(tours);
+    }
+
+    @FXML
+    private void handleImportTours() {
+         importToursFromFile();
+
+    }
+
+public void exportToursToFile(List<Tour> tours) {
+    // Create a new directory for exporting tours
+    String exportDir = "exportedTours";
+    File dir = new File(exportDir);
+    if (!dir.exists()) {
+        dir.mkdirs();
+    }
+
+    ObjectMapper mapper = new ObjectMapper();
+
+    for (Tour tour : tours) {
+        Hibernate.initialize(tour.getTourLogs()); // Initialize the tour logs collection
+
+        String tourName = tour.getName();
+        String fileName = tourName + ".json";
+        String filePath = exportDir + "/" + fileName;
+
+        try {
+            String json = mapper.writeValueAsString(tour);
+
+            // Write to a JSON file
+            FileWriter fileWriter = new FileWriter(filePath);
+            fileWriter.write(json);
+            fileWriter.close();
+            logger.info("file exported successfully!");
+
+        } catch (IOException e) {
+            logger.error("Error exporting tour to file", e);
+        }
+    }
+}
+
+
+    public void importToursFromFile() {
+        // Create a new directory for importing tours
+        String importDir = "exportedTours";
+        File dir = new File(importDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        File[] files = dir.listFiles((dir1, name) -> name.endsWith(".json"));
+        for (File file : files) {
+            String fileName = file.getName();
+            String tourName = fileName.substring(0, fileName.length() - 5); // remove ".json" extension
+
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                FileReader fileReader = new FileReader(file);
+                Tour tour = mapper.readValue(fileReader, Tour.class);
+                tourViewModel.getTours().add(tour);
+                logger.info("file imported successfully!");
+            } catch (IOException e) {
+                logger.error("Error importing tour from file", e);
+            }
         }
     }
 

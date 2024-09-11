@@ -24,6 +24,8 @@
             <Region HBox.hgrow="ALWAYS"/>
             <!-- Buttons for Tours -->
             <HBox spacing="10">
+                <Button text="Generate Report" onAction="#handleGenerateReport" />
+
                 <Button fx:id="addTour" text="+" onAction="#handleAddTour" />
                 <Button fx:id="removeTour" text="-" onAction="#handleRemoveTour"/>
                 <Button fx:id="editTour" text="edit" onAction="#handleEditTour"/>

@@ -33,6 +33,7 @@ public class TourLogController {
     private final TourService tourService;
     private MainController mainController;
 
+
         // TourLog
         @FXML
         private DatePicker datePicker;
@@ -75,6 +76,7 @@ public class TourLogController {
         this.tourLogViewModel = tourLogViewModel;
         this.tourLogService = tourLogService;
         this.tourService = tourService;
+
 
     }
 
@@ -148,15 +150,12 @@ public class TourLogController {
     public void handleSaveTourLog() {
         // Retrieve the selected date from DatePicker
         LocalDate logDate = datePicker.getValue();
-        // logger.info("Where is my Date? : " + logDate);
-
         String comment = commentField.getText();
         String difficulty = difficultyComboBox.getValue();
         Integer duration = durationSpinner.getValue();
         Double distance = distanceSpinner.getValue();
         String rating = ratingComboBox.getValue();
         Long tourID = tourIdComboBox.getValue();
-        // logger.info("selectedTourId: " + tourID);
 
         // Check if all required fields are filled out
         if (logDate == null || comment.isEmpty() || difficulty == null || duration == null || distance == null || rating == null) {
@@ -178,6 +177,7 @@ public class TourLogController {
         TourLog tourLog = new TourLog(logDate, comment, difficulty, duration, distance, rating);
         tourLog.setTour(selectedTour);
 
+
         mainController.updateTourIdComboBox();
         // Save the TourLog using the service
         tourLogService.addTourLog(tourLog);
@@ -196,6 +196,7 @@ public class TourLogController {
         distanceSpinner.getValueFactory().setValue(0.1);
         ratingComboBox.setValue(null);
         tourIdComboBox.setValue(null);
+
     }
 
 
@@ -264,4 +265,7 @@ public class TourLogController {
         stage.close();
 
     }
-    }
+
+
+
+}
