@@ -13,7 +13,15 @@ module com.example.TourPlanner {
     requires java.sql;
     requires org.apache.logging.log4j;
     requires java.base; // already implicitly required
-    requires org.hibernate.orm.core; // add this if you are using Hibernate
+    requires org.hibernate.orm.core;
+    //requires layout;
+   // requires kernel;
+    requires spring.data.commons;
+    requires com.fasterxml.jackson.databind;
+    requires com.fasterxml.jackson.datatype.jsr310;
+    requires layout;
+    requires kernel;
+
 
     opens com.example.TourPlanner to javafx.fxml;
     opens com.example.TourPlanner.model;
@@ -27,5 +35,5 @@ module com.example.TourPlanner {
     exports com.example.TourPlanner.service;
     exports com.example.TourPlanner.viewModel;
     exports com.example.TourPlanner.view;
-   opens com.example.TourPlanner.view to javafx.fxml;
+    opens com.example.TourPlanner.view;
 }

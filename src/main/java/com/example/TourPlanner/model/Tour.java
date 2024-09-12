@@ -9,19 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-// JavaFx main lauft nicht,
-// die repository classes funktionieren irgendiwe auch nicht
-
-// SpringBoot Main lauft!
-//Db anbindung funktionert!
-//Tables werden created!
-
-// every tour consists of name, tour description, from, to, transport type, tour distance,
-//estimated time, route information (an image with the tour map)
-//o the image, the distance, and the time should be retrieved by a REST request using the
-//OpenRouteservice.org APIs and OpenStreetMap Tile Server
-//(https://openrouteservice.org/dev , https://tile.openstreetmap.org/ )
-
 @Getter
 @Setter
 @Data
@@ -49,7 +36,12 @@ public class Tour {
     @Column
     private String routeInfos;// image with tour-map
 
-    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
+    // Computed attributes
+    private Integer popularity;
+    private String childFriendliness;
+
+
+    @OneToMany(mappedBy = "tour", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TourLog> tourLogs = new ArrayList<>();;
 
     public Tour(String name, String description, String from, String to, String transportType) {

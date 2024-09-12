@@ -45,11 +45,6 @@ public class MapController {
         });
     }
 
-    // Method to handle button clicks (e.g., General, Route, Misc)
-    @FXML
-    public void handleGeneralButton() {
-        logger.info("General shall do something for Map");
-    }
 
     public void handleRouteButton() {
 
@@ -60,7 +55,4 @@ public class MapController {
 
     }
 
-    public void handleMiscButton() {
-        logger.info("Misc shall do something cool");
-    }
 }

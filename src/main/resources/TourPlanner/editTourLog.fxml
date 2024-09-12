@@ -35,7 +35,7 @@
         <Label text="Distance in km:"/>
         <Spinner fx:id="distanceSpinner" HBox.hgrow="ALWAYS">
             <valueFactory>
-                <SpinnerValueFactory.DoubleSpinnerValueFactory min="0.1" max="100.0" initialValue="1.0" amountToStepBy="0.1"/>
+                <SpinnerValueFactory.DoubleSpinnerValueFactory min="0.1" max="100.0" initialValue="1.0" amountToStepBy="0.2"/>
             </valueFactory>
         </Spinner>
     </HBox>
@@ -92,7 +92,7 @@
     <HBox spacing="10">
         <Button text="Update" onAction="#handleUpdateTourLog"/>
         <Button text="Cancel" onAction="#handleCancel"/>
-        <Label fx:id="successLabel" text="" style="-fx-text-fill: green;"/>
+        <Label fx:id="successLabel" style="-fx-text-fill: green;"/>
     </HBox>
 
 </VBox>

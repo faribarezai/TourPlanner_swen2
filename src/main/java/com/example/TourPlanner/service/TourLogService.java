@@ -1,11 +1,11 @@
 package com.example.TourPlanner.service;
 
+import com.example.TourPlanner.model.Tour;
 import com.example.TourPlanner.model.TourLog;
 import com.example.TourPlanner.repository.TourLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +18,13 @@ public class TourLogService {
 
     @Autowired
     private TourLogRepository tourLogRepository;
+
+    public TourLogService() {}
+
+    public TourLogService(TourLogRepository tourLogRepository) {
+        this.tourLogRepository = tourLogRepository;
+    }
+
 
     public List<TourLog> getAllTourLogs() {
         List<TourLog> tourLogs = tourLogRepository.findAll();
@@ -41,7 +48,7 @@ public class TourLogService {
         Optional<TourLog> optionalExistingTourLog = tourLogRepository.findById(updatedTourLog.getTourlogID());
         if (optionalExistingTourLog.isPresent()) {
             TourLog existingTourLog = optionalExistingTourLog.get();
-            logger.log(Level.WARNING, "TourLog with ID exists" + existingTourLog.getTourlogID());
+            logger.log(Level.WARNING, "TourLog with ID exists ->> " + existingTourLog.getTourlogID());
 
             existingTourLog.setDate(updatedTourLog.getDate());
             existingTourLog.setDistance(updatedTourLog.getDistance());
@@ -50,8 +57,10 @@ public class TourLogService {
             existingTourLog.setDuration(updatedTourLog.getDuration());
             existingTourLog.setRating(updatedTourLog.getRating());
 
-            //existingTourLog.setTour(updatedTourLog.getTourId());
-            existingTourLog.setTourId(updatedTourLog.getTourId());
+            Tour tour= updatedTourLog.getTour();
+            existingTourLog.setTourId(tour.getTourID());
+            // Set the tour object (not the ID, as it could lead to issues)
+           // existingTourLog.setTour(updatedTourLog.getTour());
 
             // Set other properties as needed
             tourLogRepository.save(existingTourLog);
@@ -59,4 +68,13 @@ public class TourLogService {
             logger.log(Level.WARNING, "TourLog with ID " + updatedTourLog.getTourlogID() + " not found.");
         }
     }
+
+
+    public List<TourLog> getTourLogsByTourId(Long tourId) {
+        System.out.println("All Tourolgs of tour: "+tourId +" :->> " + getAllTourLogs().toString());
+        return tourLogRepository.findByTourId(tourId);
+
+
+    }
+
 }

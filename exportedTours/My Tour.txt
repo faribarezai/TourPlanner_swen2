@@ -1,0 +1,18 @@
+Tour ID: 1
+Name: My Tour
+From: MatzleinsdorferPlatz
+To: Wiener Neustadt
+Transport Type: Bike
+Description: for adventurous people, throught the hills and back
+Estimated Time: Not available
+Tour Distance: Not available
+Route Infos: Not available
+
+Tour Logs:
+Log ID: 4
+Date: 2024-08-30
+Difficulty: Easy
+Comment: this was perfect! loved it!
+Duration: 15
+Distance: 1.5
+---------

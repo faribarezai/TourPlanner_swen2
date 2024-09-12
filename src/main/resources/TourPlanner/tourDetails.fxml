@@ -14,20 +14,33 @@
     </padding>
 <HBox spacing="10" VBox.vgrow="ALWAYS">
     <VBox HBox.hgrow="ALWAYS">
-    <Label text="Tour Details" styleClass="label-title"/>
+        <Label text="Tour Details" styleClass="label-title"/>
 
-    <Label fx:id="tourIdLabel" styleClass="label-details"/>
-    <Label fx:id="tourNameLabel" styleClass="label-details"/>
-    <Label fx:id="tourFromLabel" styleClass="label-details"/>
-    <Label fx:id="tourToLabel" styleClass="label-details"/>
-    <Label fx:id="tourTransportTypeLabel" styleClass="label-details"/>
-    <Label fx:id="tourDescriptionLabel" styleClass="label-details"/>
-    <Label fx:id="tourEstimatedTimeLabel" styleClass="label-details"/>
-    <Label fx:id="tourDistanceLabel" styleClass="label-details"/>
+        <Label fx:id="tourIdLabel" styleClass="label-details"/>
+        <Label fx:id="tourNameLabel" styleClass="label-details"/>
+        <Label fx:id="tourFromLabel" styleClass="label-details"/>
+        <Label fx:id="tourToLabel" styleClass="label-details"/>
+        <Label fx:id="tourTransportTypeLabel" styleClass="label-details"/>
+        <Label fx:id="tourDescriptionLabel" styleClass="label-details"/>
+        <Label fx:id="tourEstimatedTimeLabel" styleClass="label-details"/>
+        <Label fx:id="tourDistanceLabel" styleClass="label-details"/>
 
-    <Label fx:id="routeInfoLabel" styleClass="label-details"/>
-    <ImageView fx:id="routeImageView" fitWidth="200" fitHeight="150"/>
+        <Label fx:id="routeInfoLabel" styleClass="label-details"/>
+        <ImageView fx:id="routeImageView" fitWidth="200" fitHeight="150"/>
 
+        <Label fx:id="popularityLabel" styleClass="label-details"/>
+        <Label fx:id="childFriendlinessLabel" styleClass="label-details"/>
+
+    </VBox>
+
+    <VBox alignment="TOP_CENTER">
+      <HBox spacing="10">
+      <Button text="Export Tours" onAction="#handleExportTours"/>
+      <Button text="Import Tours" onAction="#handleImportTours"/>
+      <Button text="Generate Report" onAction="#handleGenerateSingleTourReport"/>
+
+      </HBox>
+        <Label fx:id="successLabel" style="-fx-text-fill: green;"/>
     </VBox>
 
 </HBox>

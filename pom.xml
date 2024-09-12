@@ -16,7 +16,7 @@
 
 	<properties>
 		<java.version>21</java.version>
-		<itext.version>7.2.4</itext.version>
+		<itext.version>7.2.5</itext.version>
 		<slf4j.version>2.0.6</slf4j.version>
 
 	</properties>
@@ -89,7 +89,26 @@
 
 
 
+		<!-- Jackson core library -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>2.17.2</version>
+		</dependency>
 
+		<!-- Jackson databind library -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.18.0-rc1</version>
+		</dependency>
+
+		<!-- Jackson datatype module for Java 8 Date and Time API -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+			<version>2.18.0-rc1</version>
+		</dependency>
 
 		<!-- PDF generation-->
 
@@ -98,11 +117,46 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
+		<!--
+            <dependency>
+                <groupId>com.itextpdf</groupId>
+                <artifactId>itext7-core</artifactId>
+                <version>8.0.5</version>
+            </dependency>
+    --><dependency>
+		<groupId>com.itextpdf</groupId>
+		<artifactId>kernel</artifactId>
+		<version>7.2.4</version>
+	</dependency>
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>io</artifactId>
+			<version>7.2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>layout</artifactId>
+			<version>7.2.4</version>
+		</dependency>
+			<!-- GraphHopper Core Library -->
+		<dependency>
+			<groupId>com.graphhopper</groupId>
+			<artifactId>graphhopper-core</artifactId>
+			<version>9.1</version>
+		</dependency>
+
+			<!-- GraphHopper Routing Module
+			<dependency>
+				<groupId>com.graphhopper</groupId>
+				<artifactId>graphhopper-routing</artifactId>
+				<version>9.1</version>
+			</dependency>
+		-->
+			<!-- Other dependencies -->
 
 
 
-
-		<!-- Log4j dependencies -->
+            <!-- Log4j dependencies -->
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
@@ -136,6 +190,9 @@
 
 
 	</dependencies>
+
+
+
 
 	<build>
 		<plugins>
