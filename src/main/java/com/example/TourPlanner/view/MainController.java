@@ -6,6 +6,7 @@ import com.example.TourPlanner.service.TourLogService;
 import com.example.TourPlanner.service.TourService;
 import com.example.TourPlanner.viewModel.TourViewModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -26,10 +27,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import javafx.scene.image.ImageView;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.sql.Time;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -525,62 +526,146 @@ long tourId= selectedTour.getTourID();
 
     }
 
-public void exportToursToFile(List<Tour> tours) {
-    // Create a new directory for exporting tours
-    String exportDir = "exportedTours";
-    File dir = new File(exportDir);
-    if (!dir.exists()) {
-        dir.mkdirs();
-    }
+    public void exportToursToFile(List<Tour> tours) {
+        String exportDir = "exportedTours";
+        File dir = new File(exportDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
 
-    ObjectMapper mapper = new ObjectMapper();
+        for (Tour tour : tours) {
+            Hibernate.initialize(tour.getTourLogs()); // Initialize the tour logs collection
 
-    for (Tour tour : tours) {
-        Hibernate.initialize(tour.getTourLogs()); // Initialize the tour logs collection
+            String tourName = tour.getName();
+            String fileName = tourName + ".txt";
+            String filePath = exportDir + "/" + fileName;
 
-        String tourName = tour.getName();
-        String fileName = tourName + ".json";
-        String filePath = exportDir + "/" + fileName;
+            try (FileWriter fileWriter = new FileWriter(filePath)) {
+                fileWriter.write("Tour ID: " + tour.getTourID() + "\n");
+                fileWriter.write("Name: " + tour.getName() + "\n");
+                fileWriter.write("From: " + tour.getTourFrom() + "\n");
+                fileWriter.write("To: " + tour.getTourTo() + "\n");
+                fileWriter.write("Transport Type: " + tour.getTransportType() + "\n");
+                fileWriter.write("Description: " + tour.getDescription() + "\n");
+                fileWriter.write("Estimated Time: " + (tour.getEstimatedTime() != null ? tour.getEstimatedTime() : "Not available") + "\n");
+                fileWriter.write("Tour Distance: " + (tour.getTourDistance() != null ? tour.getTourDistance() : "Not available") + "\n");
+                fileWriter.write("Route Infos: " + (tour.getRouteInfos() != null ? tour.getRouteInfos() : "Not available") + "\n");
 
-        try {
-            String json = mapper.writeValueAsString(tour);
+                // Write tour logs
+                List<TourLog> tourLogs = tour.getTourLogs();
+                if (tourLogs != null && !tourLogs.isEmpty()) {
+                    fileWriter.write("\nTour Logs:\n");
+                    for (TourLog log : tourLogs) {
+                        fileWriter.write("Log ID: " + log.getTourlogID() + "\n");
+                        fileWriter.write("Date: " + log.getDate() + "\n");
+                        fileWriter.write("Difficulty: " + log.getDifficulty() + "\n");
+                        fileWriter.write("Comment: " + log.getComment() + "\n");
+                        fileWriter.write("Duration: " + log.getDuration() + "\n");
+                        fileWriter.write("Distance: " + log.getDistance() + "\n");
+                        fileWriter.write("---------\n");
+                    }
+                } else {
+                    fileWriter.write("No logs available for this tour.\n");
+                }
 
-            // Write to a JSON file
-            FileWriter fileWriter = new FileWriter(filePath);
-            fileWriter.write(json);
-            fileWriter.close();
-            logger.info("file exported successfully!");
+                logger.info("File exported successfully!");
 
-        } catch (IOException e) {
-            logger.error("Error exporting tour to file", e);
+            } catch (IOException e) {
+                logger.error("Error exporting tour to file", e);
+            }
         }
     }
-}
+
+
+
 
 
     public void importToursFromFile() {
-        // Create a new directory for importing tours
         String importDir = "exportedTours";
         File dir = new File(importDir);
         if (!dir.exists()) {
             dir.mkdirs();
         }
 
-        File[] files = dir.listFiles((dir1, name) -> name.endsWith(".json"));
-        for (File file : files) {
-            String fileName = file.getName();
-            String tourName = fileName.substring(0, fileName.length() - 5); // remove ".json" extension
+        File[] files = dir.listFiles((dir1, name) -> name.endsWith(".txt"));
+        if (files == null) {
+            logger.error("No text files found for import.");
+            return;
+        }
 
-            try {
-                ObjectMapper mapper = new ObjectMapper();
-                FileReader fileReader = new FileReader(file);
-                Tour tour = mapper.readValue(fileReader, Tour.class);
+        for (File file : files) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                String line;
+                Tour tour = new Tour();
+                List<TourLog> tourLogs = new ArrayList<>();
+                TourLog tourLog = null;
+
+                while ((line = reader.readLine()) != null) {
+                    if (line.startsWith("Tour ID:")) {
+                        tour.setTourID(Long.parseLong(line.substring(8).trim()));
+                    } else if (line.startsWith("Name:")) {
+                        tour.setName(line.substring(5).trim());
+                    } else if (line.startsWith("From:")) {
+                        tour.setTourFrom(line.substring(5).trim());
+                    } else if (line.startsWith("To:")) {
+                        tour.setTourTo(line.substring(3).trim());
+                    } else if (line.startsWith("Transport Type:")) {
+                        tour.setTransportType(line.substring(16).trim());
+                    } else if (line.startsWith("Description:")) {
+                        tour.setDescription(line.substring(12).trim());
+                    } else if (line.startsWith("Estimated Time:")) {
+                        tour.setEstimatedTime(Time.valueOf(line.substring(15).trim()));
+                    } else if (line.startsWith("Tour Distance:")) {
+                        tour.setTourDistance(Double.valueOf(line.substring(14).trim()));
+                    } else if (line.startsWith("Route Infos:")) {
+                        tour.setRouteInfos(line.substring(12).trim());
+                    } else if (line.startsWith("Log ID:")) {
+                        if (tourLog != null) {
+                            tourLogs.add(tourLog);
+                        }
+                        tourLog = new TourLog();
+                        tourLog.setTourlogID(Long.parseLong(line.substring(7).trim()));
+                    } else if (line.startsWith("Date:")) {
+                        if (tourLog != null) {
+                            tourLog.setDate(LocalDate.parse(line.substring(5).trim()));
+                        }
+                    } else if (line.startsWith("Difficulty:")) {
+                        if (tourLog != null) {
+                            tourLog.setDifficulty(line.substring(11).trim());
+                        }
+                    } else if (line.startsWith("Comment:")) {
+                        if (tourLog != null) {
+                            tourLog.setComment(line.substring(8).trim());
+                        }
+                    } else if (line.startsWith("Duration:")) {
+                        if (tourLog != null) {
+                            tourLog.setDuration(Integer.parseInt(line.substring(9).trim()));
+                        }
+                    } else if (line.startsWith("Distance:")) {
+                        if (tourLog != null) {
+                            tourLog.setDistance(Double.parseDouble(line.substring(9).trim()));
+                        }
+                    } else if (line.equals("---------")) {
+                        if (tourLog != null) {
+                            tourLogs.add(tourLog);
+                            tourLog = null;
+                        }
+                    }
+                }
+
+                if (tourLog != null) {
+                    tourLogs.add(tourLog);
+                }
+
+                tour.setTourLogs(tourLogs);
                 tourViewModel.getTours().add(tour);
-                logger.info("file imported successfully!");
+                logger.info("File imported successfully!");
+
             } catch (IOException e) {
                 logger.error("Error importing tour from file", e);
             }
         }
     }
+
 
 }

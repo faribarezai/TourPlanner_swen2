@@ -1,5 +1,6 @@
 package com.example.TourPlanner.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -21,6 +22,9 @@ public class TourLog {
     @Column
     private LocalDate date;
     @Column
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate startDate;
+
     private String comment;
     @Column
     private String difficulty; //easy to extreme
