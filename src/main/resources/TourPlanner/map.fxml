@@ -13,15 +13,10 @@
     <!-- General -->
     <VBox spacing="10" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
           <HBox spacing="20">
-              <Button text="General" onAction="#handleGeneralButton"/>
               <Button text="Route" onAction="#handleRouteButton"/>
-              <Button text="Misc" onAction="#handleMiscButton"/>
+
           </HBox>
-
-
           <WebView fx:id="mapWebView" VBox.vgrow="ALWAYS"/>
-
-
           <Label fx:id="mapErrorLabel" text="Map not available now" visible="false" style="-fx-text-fill: red; -fx-font-size: 14;" />
     </VBox>
 

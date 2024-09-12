@@ -5,12 +5,20 @@ import com.example.TourPlanner.model.TourLog;
 import com.example.TourPlanner.service.TourLogService;
 import com.example.TourPlanner.service.TourService;
 import com.example.TourPlanner.viewModel.TourViewModel;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.Document;
+import java.io.*;
+
+
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.properties.TextAlignment;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -27,11 +35,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import javafx.scene.image.ImageView;
 
-import java.io.*;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.itextpdf.kernel.pdf.PdfName.Document;
+import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.Element;
 
 @Component
 public class MainController {
@@ -97,7 +107,8 @@ public class MainController {
     private Label popularityLabel;
     @FXML
     private Label childFriendlinessLabel;
-
+    @FXML
+    private Button generateSingleTourReportButton;
 
 
 
@@ -268,6 +279,7 @@ public class MainController {
 
     }
 
+
     @FXML
     private void handleCancel() {
         tourNameField.clear();
@@ -395,26 +407,37 @@ long tourId= selectedTour.getTourID();
         this.tourLogService = tourLogService;
     }
 
+
+
     @FXML
     private void handleGenerateReport() {
 
-        logger.info("generate report Methode!!!");
-        String pdfFileName = "TourReport.pdf";
-/*
-        try (PdfWriter writer = new PdfWriter(pdfFileName);
-             PdfDocument pdfDoc = new PdfDocument(writer);
-             Document document = new Document(pdfDoc)) {
+        logger.info("Generate report btn clicked! !!!");
+        String pdfFileName = "reports/TourReport.pdf";
+
+        try {
+            // Create the reports folder if it doesn't exist
+            File reportsFolder = new File("reports");
+            if (!reportsFolder.exists()) {
+                reportsFolder.mkdirs();
+            }
+
+            PdfWriter writer = new PdfWriter(pdfFileName);
+            PdfDocument pdfDoc = new PdfDocument(writer);
+            Document document = new Document(pdfDoc);
 
             // Add a title to the document
-            document.add(new Paragraph("Tour Report")
-                    .setFontSize(18)
+            document.add(new Paragraph("All Tours")
+                    .setFontSize(12)
                     .setTextAlignment(TextAlignment.CENTER)
                     .setBold());
 
-            String selectedTourName = tourViewModel.selectedTourProperty().get();
-            Tour tour = tourViewModel.getTourDetails(selectedTourName);
+            // Get all tours
+            List<Tour> tours = tourViewModel.getTours();
 
-            if (tour != null) {
+            // Iterate through tours and add them to PDF
+            for (Tour tour : tours) {
+                document.add(new Paragraph("\n"));
                 document.add(new Paragraph("Tour ID: " + tour.getTourID()));
                 document.add(new Paragraph("Name: " + tour.getName()));
                 document.add(new Paragraph("From: " + tour.getTourFrom()));
@@ -424,53 +447,50 @@ long tourId= selectedTour.getTourID();
                 document.add(new Paragraph("Estimated Time: " + (tour.getEstimatedTime() != null ? tour.getEstimatedTime() : "Not available")));
                 document.add(new Paragraph("Tour Distance: " + (tour.getTourDistance() != null ? tour.getTourDistance() : "Not available")));
                 document.add(new Paragraph("Route Infos: " + (tour.getRouteInfos() != null ? tour.getRouteInfos() : "Not available")));
+                document.add(new Paragraph("Popularity: " + (calculatePopularity(tour.getTourID()))));
+                document.add(new Paragraph("Child Friendliness: " + (calculateChildFriendliness(tour.getTourID()))));
 
                 // Add a section for tour logs
-               // List<TourLog> tourLogs = tourLogService.getTourLogsByTourId(tour.getTourID());
+                List<TourLog> tourLogs = tourLogService.getTourLogsByTourId(tour.getTourID());
                 if (tourLogs != null && !tourLogs.isEmpty()) {
                     document.add(new Paragraph("Tour Logs:").setBold().setFontSize(16).setMarginTop(20));
 
+
+                    Paragraph paragraph = new Paragraph("TourLOG");
+                    Cell cell = new Cell();
+
                     Table table = new Table(new float[]{1, 2, 2, 3, 2, 2}); // Define column widths
-                    table.addHeaderCell(new Cell().add(new Paragraph("Log ID")));
-                    table.addHeaderCell(new Cell().add(new Paragraph("Date")));
-                    table.addHeaderCell(new Cell().add(new Paragraph("Difficulty")));
-                    table.addHeaderCell(new Cell().add(new Paragraph("Comment")));
-                    table.addHeaderCell(new Cell().add(new Paragraph("Duration")));
-                    table.addHeaderCell(new Cell().add(new Paragraph("Distance")));
+                    table.addCell("Log ID");
+                    table.addCell("Date");
+                    table.addCell("Difficulty");
+                    table.addCell("Comment");
+                    table.addCell("Duration");
+                    table.addCell("Distance");
 
                     for (TourLog log : tourLogs) {
-                        table.addCell(new Cell().add(new Paragraph(String.valueOf(log.getTourlogID()))));
-                        table.addCell(new Cell().add(new Paragraph(log.getDate().toString())));
-                        table.addCell(new Cell().add(new Paragraph(log.getDifficulty())));
-                        table.addCell(new Cell().add(new Paragraph(log.getComment())));
-                        table.addCell(new Cell().add(new Paragraph(String.valueOf(log.getDuration()))));
-                        table.addCell(new Cell().add(new Paragraph(String.valueOf(log.getDistance()))));
-                    }
+                        table.addCell(String.valueOf(log.getTourlogID()));
+                        table.addCell(log.getDate().toString());
+                        table.addCell(log.getDifficulty());
+                        table.addCell(log.getComment());
+                        table.addCell(String.valueOf(log.getDuration()));
+                        table.addCell(String.valueOf(log.getDistance()));
 
+
+                    }
                     document.add(table);
                 } else {
                     document.add(new Paragraph("No logs available for this tour."));
                 }
-*/
-        /*
-
-                successLabel.setText("PDF report generated successfully!");
-                successLabel.setStyle("-fx-text-fill: green;");
-            } else {
-                successLabel.setText("Selected tour not found.");
-                successLabel.setStyle("-fx-text-fill: red;");
             }
 
-        } catch (IOException e) {
-            logger.error("Error generating PDF report", e);
-            successLabel.setText("Failed to generate PDF report.");
-            successLabel.setStyle("-fx-text-fill: red;");
+            document.close();
+           logger.info("PDF generated successfully!");
+            successLabel.setText("PDF-Report for all Tours generated successfully!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        */
     }
-
-
-
 
 
 
@@ -569,6 +589,7 @@ long tourId= selectedTour.getTourID();
                 }
 
                 logger.info("File exported successfully!");
+                successLabel.setText("Tours exported successfully!");
 
             } catch (IOException e) {
                 logger.error("Error exporting tour to file", e);
@@ -660,12 +681,96 @@ long tourId= selectedTour.getTourID();
                 tour.setTourLogs(tourLogs);
                 tourViewModel.getTours().add(tour);
                 logger.info("File imported successfully!");
-
+                successLabel.setText("File imported successfully!");
             } catch (IOException e) {
                 logger.error("Error importing tour from file", e);
             }
         }
     }
 
+
+    public void generateSingleTourReport(Tour selectedTour) {
+        logger.info("Generate single tour report btn clicked! !!!");
+        String pdfFileName = "reports/" + selectedTour.getName() + " Report.pdf";
+
+        try {
+            // Create the reports folder if it doesn't exist
+            File reportsFolder = new File("reports");
+            if (!reportsFolder.exists()) {
+                reportsFolder.mkdirs();
+            }
+
+            PdfWriter writer = new PdfWriter(pdfFileName);
+            PdfDocument pdfDoc = new PdfDocument(writer);
+            Document document = new Document(pdfDoc);
+
+            // Add a title to the document
+            document.add(new Paragraph("Single Tour Report")
+                    .setFontSize(12)
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setBold());
+
+            // Add tour details
+            document.add(new Paragraph("Tour ID: " + selectedTour.getTourID()));
+            document.add(new Paragraph("Name: " + selectedTour.getName()));
+            document.add(new Paragraph("From: " + selectedTour.getTourFrom()));
+            document.add(new Paragraph("To: " + selectedTour.getTourTo()));
+            document.add(new Paragraph("Transport Type: " + selectedTour.getTransportType()));
+            document.add(new Paragraph("Description: " + selectedTour.getDescription()));
+            document.add(new Paragraph("Estimated Time: " + (selectedTour.getEstimatedTime() != null ? selectedTour.getEstimatedTime() : "Not available")));
+            document.add(new Paragraph("Tour Distance: " + (selectedTour.getTourDistance() != null ? selectedTour.getTourDistance() : "Not available")));
+            document.add(new Paragraph("Route Infos: " + (selectedTour.getRouteInfos() != null ? selectedTour.getRouteInfos() : "Not available")));
+            document.add(new Paragraph("Popularity: " + (calculatePopularity(selectedTour.getTourID()))));
+            document.add(new Paragraph("Child Friendliness: " + (calculateChildFriendliness(selectedTour.getTourID()))));
+
+            // Add a section for tour logs
+            List<TourLog> tourLogs = tourLogService.getTourLogsByTourId(selectedTour.getTourID());
+            if (tourLogs != null && !tourLogs.isEmpty()) {
+                document.add(new Paragraph("Tour Logs:").setBold().setFontSize(16).setMarginTop(20));
+
+                Paragraph paragraph = new Paragraph("TourLOG");
+                Cell cell = new Cell();
+
+                Table table = new Table(new float[]{1, 2, 2, 3, 2, 2}); // Define column widths
+                table.addCell("Log ID");
+                table.addCell("Date");
+                table.addCell("Difficulty");
+                table.addCell("Comment");
+                table.addCell("Duration");
+                table.addCell("Distance");
+
+                for (TourLog log : tourLogs) {
+                    table.addCell(String.valueOf(log.getTourlogID()));
+                    table.addCell(log.getDate().toString());
+                    table.addCell(log.getDifficulty());
+                    table.addCell(log.getComment());
+                    table.addCell(String.valueOf(log.getDuration()));
+                    table.addCell(String.valueOf(log.getDistance()));
+
+                }
+                document.add(table);
+            } else {
+                document.add(new Paragraph("No logs available for this tour."));
+            }
+
+            successLabel.setText("Single Report generated successfully!");
+            document.close();
+            logger.info("PDF generated successfully!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    @FXML
+    private void handleGenerateSingleTourReport() {
+        Tour selectedTour = tourListView.getSelectionModel().getSelectedItem();
+        if (selectedTour != null) {
+            generateSingleTourReport(selectedTour);
+        } else {
+            System.out.println("No tour selected!");
+        }
+    }
 
 }

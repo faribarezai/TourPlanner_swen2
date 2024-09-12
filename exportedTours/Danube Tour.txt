@@ -1,0 +1,25 @@
+Tour ID: 2
+Name: Danube Tour
+From: Donaustadbrücke
+To: Floridsdorf
+Transport Type: Vacation
+Description: enjoy the nature while walking, running along the Danube for kilometres
+Estimated Time: Not available
+Tour Distance: Not available
+Route Infos: Not available
+
+Tour Logs:
+Log ID: 3
+Date: 2024-08-22
+Difficulty: Extreme
+Comment: very difficult for me (old lady)
+Duration: 23
+Distance: 3.3
+---------
+Log ID: 8
+Date: 2024-08-13
+Difficulty: Difficult
+Comment: distance is wrong, 16,1km no way, cool test comment comment comment
+Duration: 14
+Distance: 16.1
+---------

@@ -32,12 +32,16 @@
         <Label fx:id="childFriendlinessLabel" styleClass="label-details"/>
 
     </VBox>
-    <Button text="Export Tours" onAction="#handleExportTours"/>
-    <Button text="Import Tours" onAction="#handleImportTours"/>
 
+    <VBox alignment="TOP_CENTER">
+      <HBox spacing="10">
+      <Button text="Export Tours" onAction="#handleExportTours"/>
+      <Button text="Import Tours" onAction="#handleImportTours"/>
+      <Button text="Generate Report" onAction="#handleGenerateSingleTourReport"/>
 
-    <!-- <Button fx:id="viewTourLogs" text="View Logs" onAction="#handleViewTourLogs"/>
- -->
+      </HBox>
+        <Label fx:id="successLabel" style="-fx-text-fill: green;"/>
+    </VBox>
 
 </HBox>
 

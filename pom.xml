@@ -123,7 +123,37 @@
                 <artifactId>itext7-core</artifactId>
                 <version>8.0.5</version>
             </dependency>
-    -->
+    --><dependency>
+		<groupId>com.itextpdf</groupId>
+		<artifactId>kernel</artifactId>
+		<version>7.2.4</version>
+	</dependency>
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>io</artifactId>
+			<version>7.2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>layout</artifactId>
+			<version>7.2.4</version>
+		</dependency>
+			<!-- GraphHopper Core Library -->
+		<dependency>
+			<groupId>com.graphhopper</groupId>
+			<artifactId>graphhopper-core</artifactId>
+			<version>9.1</version>
+		</dependency>
+
+			<!-- GraphHopper Routing Module
+			<dependency>
+				<groupId>com.graphhopper</groupId>
+				<artifactId>graphhopper-routing</artifactId>
+				<version>9.1</version>
+			</dependency>
+		-->
+			<!-- Other dependencies -->
+
 
 
             <!-- Log4j dependencies -->

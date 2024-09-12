@@ -42,9 +42,8 @@
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <String fx:value="Bike"/>
-                        <String fx:value="Hike"/>
-                        <String fx:value="Running"/>
-                        <String fx:value="Vacation"/>
+                        <String fx:value="Car"/>
+                        <String fx:value="Foot"/>
                     </FXCollections>
                 </items>
             </ComboBox>
@@ -53,6 +52,6 @@
         <HBox spacing="10">
             <Button text="Update" onAction="#handleUpdateTour"/>
             <Button text="Cancel" onAction="#handleCancel"/>
-            <Label fx:id="successLabel" text="" style="-fx-text-fill: green;"/>
+            <Label fx:id="successLabel" style="-fx-text-fill: green;"/>
         </HBox>
     </VBox>

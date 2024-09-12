@@ -1,0 +1,25 @@
+Tour ID: 3
+Name: relaxing Tour
+From: Karlsplatz
+To: Leopoldau
+Transport Type: Vacation
+Description: no need to switch any metro-lines. 
+Estimated Time: Not available
+Tour Distance: Not available
+Route Infos: Not available
+
+Tour Logs:
+Log ID: 5
+Date: 2024-08-24
+Difficulty: Easy
+Comment: on a saturday its is very crowdy, so would recommedn on any other days to go on this tour
+Duration: 32
+Distance: 1.4
+---------
+Log ID: 6
+Date: 2024-08-15
+Difficulty: Medium
+Comment: did not like it at all, I guess I had a bad day
+Duration: 55
+Distance: 1.9
+---------

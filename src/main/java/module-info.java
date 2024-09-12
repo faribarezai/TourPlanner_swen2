@@ -18,9 +18,9 @@ module com.example.TourPlanner {
    // requires kernel;
     requires spring.data.commons;
     requires com.fasterxml.jackson.databind;
-    requires com.fasterxml.jackson.datatype.jsr310; // add this if you are using Hibernate
-
-
+    requires com.fasterxml.jackson.datatype.jsr310;
+    requires layout;
+    requires kernel;
 
 
     opens com.example.TourPlanner to javafx.fxml;
